@@ -58,10 +58,10 @@ opuesto Oeste = Este
 iguales :: Dir -> Dir -> Bool
 -- PRECOND: Ninguna.
 iguales Norte Norte = True
-iguales Este Este   = True
-iguales Sur Sur     = True
+iguales Este  Este  = True
+iguales Sur   Sur   = True
 iguales Oeste Oeste = True
-iguales _ _         = False
+iguales _     _     = False
 
 
 -- EJERCICIO 3.1, C:
@@ -141,37 +141,25 @@ negar False = True
 
 implica :: Bool -> Bool -> Bool
 -- PRECOND: Ninguna.
-implica b1 b2 = not (esTrueYFalse b1 b2)
-
-esTrueYFalse :: Bool -> Bool -> Bool
--- PRECOND: Ninguna.
-esTrueYFalse True False = True
-esTrueYFalse _    _     = False
+implica True False = False
+implica _    _     = True
 
 
 -- EJERCICIO 3.3, C:
 
 yTambien :: Bool -> Bool -> Bool
 -- PRECOND: Ninguna.
-yTambien b1 b2 = esTrueYTrue b1 b2
-
-esTrueYTrue :: Bool -> Bool -> Bool
--- PRECOND: Ninguna.
-esTrueYTrue True True = True
-esTrueYTrue _    _    = False
+yTambien True True = True
+yTambien _    _    = False
 
 
 -- EJERCICIO 3.3, D:
 
 oBien :: Bool -> Bool -> Bool
 -- PRECOND: Ninguna.
-oBien b1 b2 = algunoEsTrue b1 b2
-
-algunoEsTrue :: Bool -> Bool -> Bool
--- PRECOND: Ninguna.
-algunoEsTrue True _    = True
-algunoEsTrue _    True = True
-algunoEsTrue _    _    = False
+oBien True  False = True 
+oBien False True  = True 
+oBien _     _     = False
 
 
 -- PUNTO 4: Registros.
@@ -188,12 +176,12 @@ data Persona = P String Int
 
 nombre :: Persona -> String
 -- PRECOND: Ninguna.
-nombre (P n e) = n
+nombre (P n _) = n
 
 
 edad :: Persona -> Int
 -- PRECOND: Ninguna.
-edad (P n e) = e
+edad (P _ e) = e
 
 
 crecer :: Persona -> Persona
@@ -203,7 +191,7 @@ crecer (P n e) = P n (e + 1)
 
 cambioDeNombre :: String -> Persona -> Persona
 -- PRECOND: Ninguna.
-cambioDeNombre nom (P n e) = P nom e
+cambioDeNombre nom (P _ e) = P nom e
 
 
 esMayorQueLaOtra :: Persona -> Persona -> Bool
@@ -242,7 +230,7 @@ data TipoDePokemon = Agua | Fuego | Planta
 
 superaA :: Pokemon -> Pokemon -> Bool
 -- PRECOND: Ninguna.
-superaA (Poke tipo1 porcen1) (Poke tipo2 porcen2) = tipoDeEsSuperiorQue tipo1 tipo2
+superaA (Poke tipo1 _) (Poke tipo2 _) = tipoDeEsSuperiorQue tipo1 tipo2
 
 tipoDeEsSuperiorQue :: TipoDePokemon -> TipoDePokemon -> Bool
 -- PRECOND: Ninguna.
@@ -254,11 +242,11 @@ tipoDeEsSuperiorQue _      _      = False
 
 cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int
 -- PRECOND: Ninguna.
-cantidadDePokemonDe tipo (Entr nomb poke1 poke2) = unoSiPokemonEsTipoCeroSino poke1 tipo + unoSiPokemonEsTipoCeroSino poke2 tipo
+cantidadDePokemonDe tipo (Entr _ poke1 poke2) = unoSiPokemonEsTipoCeroSino poke1 tipo + unoSiPokemonEsTipoCeroSino poke2 tipo
 
 unoSiPokemonEsTipoCeroSino :: Pokemon -> TipoDePokemon -> Int
 -- PRECOND: Ninguna.
-unoSiPokemonEsTipoCeroSino (Poke tipo1 porcen1) tipo2 = unoSiTipoEsMismoTipoQue tipo1 tipo2
+unoSiPokemonEsTipoCeroSino (Poke tipo1 _) tipo2 = unoSiTipoEsMismoTipoQue tipo1 tipo2
 
 unoSiTipoEsMismoTipoQue :: TipoDePokemon -> TipoDePokemon -> Int
 -- PRECOND: Ninguna.
@@ -270,7 +258,7 @@ unoSiTipoEsMismoTipoQue _      _      = 0
 
 juntarPokemon :: (Entrenador, Entrenador) -> [Pokemon]
 -- PRECOND: Ninguna.
-juntarPokemon (Entr nom1 poke1 poke2, Entr nom2 poke3 poke4) = [poke1, poke2, poke3, poke4]
+juntarPokemon (Entr _ poke1 poke2, Entr _ poke3 poke4) = [poke1, poke2, poke3, poke4]
 
 
 -- PUNTO 5: Funciones polimórficas.
