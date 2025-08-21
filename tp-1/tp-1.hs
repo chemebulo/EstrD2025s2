@@ -157,9 +157,9 @@ yTambien _    _    = False
 
 oBien :: Bool -> Bool -> Bool
 -- PRECOND: Ninguna.
-oBien True  False = True 
-oBien False True  = True 
-oBien _     _     = False
+oBien True  _    = True 
+oBien _     True = True 
+oBien _     _    = False
 
 
 -- PUNTO 4: Registros.
