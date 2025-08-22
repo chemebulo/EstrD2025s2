@@ -141,25 +141,26 @@ negar False = True
 
 implica :: Bool -> Bool -> Bool
 -- PRECOND: Ninguna.
-implica True False = False
-implica _    _     = True
+implica True  b = case b of
+                     False -> False
+                     _     -> True
+implica False _ = True
 
 
 -- EJERCICIO 3.3, C:
 
 yTambien :: Bool -> Bool -> Bool
 -- PRECOND: Ninguna.
-yTambien True True = True
-yTambien _    _    = False
+yTambien True  b = b
+yTambien False _ = False
 
 
 -- EJERCICIO 3.3, D:
 
 oBien :: Bool -> Bool -> Bool
 -- PRECOND: Ninguna.
-oBien True  False = True 
-oBien False True  = True 
-oBien _     _     = False
+oBien True  _ = True 
+oBien False b = b
 
 
 -- PUNTO 4: Registros.
