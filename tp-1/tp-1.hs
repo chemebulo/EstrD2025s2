@@ -195,14 +195,14 @@ cambioDeNombre nom (P _ e) = P nom e
 
 esMayorQueLaOtra :: Persona -> Persona -> Bool
 -- PRECOND: Ninguna.
-esMayorQueLaOtra (P nom1 edad1) (P nom2 edad2) = edad (P nom1 edad1) > edad (P nom2 edad2)
+esMayorQueLaOtra p1 p2 = edad p1 > edad p2
 
 
 laQueEsMayor :: Persona -> Persona -> Persona
 -- PERCOND: Ninguna.
-laQueEsMayor (P nom1 edad1) (P nom2 edad2) = if esMayorQueLaOtra (P nom1 edad1) (P nom2 edad2)
-                                                then P nom1 edad1
-                                                else P nom2 edad2
+laQueEsMayor p1 p2 = if esMayorQueLaOtra p1 p2
+                        then p1
+                        else p2
 
 
 -- EJERCICIO 4.2:
@@ -323,4 +323,4 @@ sinElPrimero (_:xs) = xs
 
 splitHead :: [a] -> (a, [a])
 -- PRECOND: La lista no es vacía.
-splitHead (x:xs) = (elPrimero (x:xs), sinElPrimero (x:xs))
+splitHead (x:xs) = (x, xs)
