@@ -141,10 +141,8 @@ negar False = True
 
 implica :: Bool -> Bool -> Bool
 -- PRECOND: Ninguna.
-implica True  b = case b of
-                     False -> False
-                     _     -> True
-implica False _ = True
+implica True  b = b
+implica _     _ = True
 
 
 -- EJERCICIO 3.3, C:
