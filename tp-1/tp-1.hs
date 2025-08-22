@@ -150,15 +150,15 @@ implica _     _ = True
 yTambien :: Bool -> Bool -> Bool
 -- PRECOND: Ninguna.
 yTambien True  b = b
-yTambien False _ = False
+yTambien _     _ = False
 
 
 -- EJERCICIO 3.3, D:
 
 oBien :: Bool -> Bool -> Bool
 -- PRECOND: Ninguna.
-oBien True  _ = True 
-oBien False b = b
+oBien False b2 = b2
+oBien b1    _  = b1 
 
 
 -- PUNTO 4: Registros.
