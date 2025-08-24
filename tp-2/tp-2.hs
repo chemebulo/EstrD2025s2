@@ -1,4 +1,4 @@
--- PUNTO 1: Recursión sobre listas.
+-- EJERCICIO 1: Recursión sobre listas.
 
 -- EJERCICIO 1.1:
 
@@ -137,4 +137,59 @@ elMinimo (x:xs) = if x < elMinimo xs
 
 -- ####################################################################################################################### --
 
--- PUNTO 2: Recursión sobre números.
+-- EJERCICIO 2: Recursión sobre números.
+
+-- EJERCICIO 2.1:
+
+factorial :: Int -> Int
+-- PROPÓSITO: Dado un número n se devuelve la multiplicación de este número y todos sus anteriores hasta llegar a 0. 
+--            Si n es 0 devuelve 1. La función es parcial si n es negativo.
+-- PRECONDICIÓN: n > 0.
+factorial 0 = 1
+factorial n = n * factorial (n-1)
+
+
+-- EJERCICIO 2.2:
+
+cuentaRegresiva :: Int -> [Int]
+-- PROPÓSITO: Dado un número n devuelve una lista cuyos elementos sean los números comprendidos entre n y 1 (incluidos). 
+--            Si el número es inferior a 1, devuelve la lista vacía.
+-- PRECONDICIÓN: n >= 0.
+cuentaRegresiva 0 = []
+cuentaRegresiva n = n : cuentaRegresiva (n-1)
+
+
+-- EJERCICIO 2.3:
+
+repetir :: Int -> a -> [a]
+-- PROPÓSITO: Dado un número n y un elemento e devuelve una lista en la que el elemento e repite n veces.
+-- PRECONDICIÓN: n > 0.
+repetir 0 _ = []
+repetir n e = e : repetir (n-1) e
+
+
+-- EJERCICIO 2.4:
+
+losPrimeros :: Int -> [a] -> [a]
+-- PROPÓSITO: Dados un número n y una lista xs, devuelve una lista con los n primeros elementos de xs. 
+--            Si la lista es vacía, devuelve una lista vacía.
+-- PRECONDICIÓN: n > 0.
+losPrimeros 0 _      = []
+losPrimeros _ []     = []
+losPrimeros n (x:xs) = x : losPrimeros (n-1) xs
+
+
+-- EJERCICIO 2.5:
+
+sinLosPrimeros :: Int -> [a] -> [a]
+-- PROPÓSITO: Dados un número n y una lista xs, devuelve una lista sin los primeros n elementos de lista recibida. 
+--            Si n es cero, devuelve la lista completa.
+-- PRECONDICIÓN: n > 0.
+sinLosPrimeros 0 xs     = xs
+sinLosPrimeros _ []     = []
+sinLosPrimeros n (x:xs) = sinLosPrimeros (n-1) xs
+
+
+-- ####################################################################################################################### --
+
+-- EJERCICIO 3: Registros.
