@@ -144,7 +144,6 @@ elMinimo (x:xs) = if x < elMinimo xs
 factorial :: Int -> Int
 -- PROPÓSITO: Dado un número n se devuelve la multiplicación de este número y todos sus anteriores hasta llegar a 0. 
 --            Si n es 0 devuelve 1. La función es parcial si n es negativo.
--- PRECONDICIÓN: n > 0.
 factorial 0 = 1
 factorial n = n * factorial (n-1)
 
@@ -154,16 +153,14 @@ factorial n = n * factorial (n-1)
 cuentaRegresiva :: Int -> [Int]
 -- PROPÓSITO: Dado un número n devuelve una lista cuyos elementos sean los números comprendidos entre n y 1 (incluidos). 
 --            Si el número es inferior a 1, devuelve la lista vacía.
--- PRECONDICIÓN: n >= 0.
-cuentaRegresiva 0 = []
-cuentaRegresiva n = n : cuentaRegresiva (n-1)
-
+cuentaRegresiva n = if n < 1
+                       then []
+                       else n : cuentaRegresiva (n-1)
 
 -- EJERCICIO 2.3:
 
 repetir :: Int -> a -> [a]
 -- PROPÓSITO: Dado un número n y un elemento e devuelve una lista en la que el elemento e repite n veces.
--- PRECONDICIÓN: n > 0.
 repetir 0 _ = []
 repetir n e = e : repetir (n-1) e
 
@@ -173,7 +170,6 @@ repetir n e = e : repetir (n-1) e
 losPrimeros :: Int -> [a] -> [a]
 -- PROPÓSITO: Dados un número n y una lista xs, devuelve una lista con los n primeros elementos de xs. 
 --            Si la lista es vacía, devuelve una lista vacía.
--- PRECONDICIÓN: n > 0.
 losPrimeros 0 _      = []
 losPrimeros _ []     = []
 losPrimeros n (x:xs) = x : losPrimeros (n-1) xs
@@ -184,7 +180,6 @@ losPrimeros n (x:xs) = x : losPrimeros (n-1) xs
 sinLosPrimeros :: Int -> [a] -> [a]
 -- PROPÓSITO: Dados un número n y una lista xs, devuelve una lista sin los primeros n elementos de lista recibida. 
 --            Si n es cero, devuelve la lista completa.
--- PRECONDICIÓN: n > 0.
 sinLosPrimeros 0 xs     = xs
 sinLosPrimeros _ []     = []
 sinLosPrimeros n (_:xs) = sinLosPrimeros (n-1) xs
