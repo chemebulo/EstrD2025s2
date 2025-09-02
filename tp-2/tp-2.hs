@@ -130,9 +130,7 @@ elMinimo :: Ord a => [a] -> a
 -- PRECONDICIÓN: La lista no es vacía.
 elMinimo []     = error "No existe un elemento mínimo de una lista vacía."
 elMinimo (x:[]) = x
-elMinimo (x:xs) = if x < elMinimo xs
-                     then x
-                     else elMinimo xs
+elMinimo (x:xs) = min x (elMinimo xs)
 
 
 -- ####################################################################################################################### --
@@ -346,6 +344,27 @@ data Rol = Developer Seniority Proyecto | Management Seniority Proyecto
 data Empresa = ConsEmpresa [Rol]
     deriving Show
 
+dhl :: Empresa
+dhl = ConsEmpresa [jorge, ricardo, miguel]
+
+gtavi :: Proyecto
+gtavi = ConsProyecto "GTA VI"
+
+eurotruck :: Proyecto
+eurotruck = ConsProyecto "Euro Truck Simulator 2"
+
+assettocorsa :: Proyecto
+assettocorsa = ConsProyecto "Assetto Corsa"
+
+jorge :: Rol
+jorge = Developer Junior gtavi
+
+ricardo :: Rol
+ricardo = Management Senior gtavi
+
+miguel :: Rol
+miguel = Developer SemiSenior assettocorsa
+
 
 -- EJERCICIO 3.3.1:
 
@@ -418,16 +437,16 @@ cantidadQueTrabajanEn (r:rs) ps = if participaEnAlgunProyecto r ps
 
 asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
 -- PROPÓSITO: Devuelve una lista de pares que representa a los proyectos (sin repetir) junto con su cantidad de personas involucradas.
-asignadosPorProyecto (ConsEmpresa rs) = asignadosPorProyectoEn (proyectosEn rs) rs
+asignadosPorProyecto (ConsEmpresa rs) = asignadosPorProyectoEn rs
 
-asignadosPorProyectoEn  :: [Proyecto] -> [Rol] -> [(Proyecto, Int)]
+asignadosPorProyectoEn  :: [Rol] -> [(Proyecto, Int)]
 -- PROPÓSITO: Describe una lista de pares que representa a los proyectos (sin repetir) junto con su cantidad de personas involucradas.
-asignadosPorProyectoEn []     _  = []
-asignadosPorProyectoEn (p:ps) rs = (p, cantidadDeAsingadosEn p rs) : asignadosPorProyectoEn ps rs
+asignadosPorProyectoEn []     = []
+asignadosPorProyectoEn (r:rs) = agregarProyectoDeRolA r (asignadosPorProyectoEn rs)
 
-cantidadDeAsingadosEn :: Proyecto -> [Rol] -> Int
--- PROPÓSITO: Describe la cantidad de roles que hay asignados en el proyecto dado.
-cantidadDeAsingadosEn _ []     = 0
-cantidadDeAsingadosEn p (r:rs) = if esMismoProyecto (proyectoDe r) p
-                                    then 1 + cantidadDeAsingadosEn p rs
-                                    else cantidadDeAsingadosEn p rs
+agregarProyectoDeRolA :: Rol -> [(Proyecto, Int)] -> [(Proyecto, Int)]
+-- PROPÓSITO: Agrega el proyecto en el que trabaja el rol dado a la lista de pares de proyectos con la cantidad de integrantes.
+agregarProyectoDeRolA r []          = [(proyectoDe r, 1)]
+agregarProyectoDeRolA r ((p, i):ps) = if esMismoProyecto (proyectoDe r) p
+                                         then (p, i+1) : ps
+                                         else (p, i) : (agregarProyectoDeRolA r ps)
