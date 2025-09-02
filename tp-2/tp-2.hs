@@ -344,27 +344,6 @@ data Rol = Developer Seniority Proyecto | Management Seniority Proyecto
 data Empresa = ConsEmpresa [Rol]
     deriving Show
 
-dhl :: Empresa
-dhl = ConsEmpresa [jorge, ricardo, miguel]
-
-gtavi :: Proyecto
-gtavi = ConsProyecto "GTA VI"
-
-eurotruck :: Proyecto
-eurotruck = ConsProyecto "Euro Truck Simulator 2"
-
-assettocorsa :: Proyecto
-assettocorsa = ConsProyecto "Assetto Corsa"
-
-jorge :: Rol
-jorge = Developer Junior gtavi
-
-ricardo :: Rol
-ricardo = Management Senior gtavi
-
-miguel :: Rol
-miguel = Developer SemiSenior assettocorsa
-
 
 -- EJERCICIO 3.3.1:
 
