@@ -51,7 +51,7 @@ sacar c1 (Bolita c2 cel) = if sonMismoColor c1 c2
 
 ponerN :: Int -> Color -> Celda -> Celda
 -- PROPÓSITO: Dado un número n, un color c, y una celda, agrega n bolitas de color c a la celda.
-ponerN 0 c ce = ce
+ponerN 0 _ ce = ce
 ponerN n c ce = Bolita c (ponerN (n-1) c ce)
 
 
@@ -136,7 +136,183 @@ cantTesorosEntre 0  0  _              = 0
 cantTesorosEntre 0  n2 (Nada cam)     = cantTesorosEntre 0 (n2-1) cam 
 cantTesorosEntre 0  n2 (Cofre os cam) = cantidadDeTesoros os + cantTesorosEntre 0 (n2-1) cam
 cantTesorosEntre n1 n2 (Nada cam)     = cantTesorosEntre (n1-1) (n2-1) cam
-cantTesorosEntre n1 n2 (Cofre os cam) = cantTesorosEntre (n1-1) (n2-1) cam
+cantTesorosEntre n1 n2 (Cofre _ cam)  = cantTesorosEntre (n1-1) (n2-1) cam
 
 
 -- ####################################################################################################################### --
+
+-- EJERCICIO 2: Tipos Arbóreos.
+
+-- EJERCICIO 2.1: Árboles binarios.
+
+data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
+    deriving Show
+
+
+-- EJERCICIO 2.1.1:
+
+sumarT :: Tree Int -> Int
+-- PROPÓSITO: Dado un árbol binario de enteros devuelve la suma entre sus elementos.
+sumarT EmptyT          = 0
+sumarT (NodeT n ti td) = n + sumarT ti + sumarT td
+
+
+-- EJERCICIO 2.1.2:
+
+sizeT :: Tree a -> Int
+-- PROPÓSITO: Dado un árbol binario devuelve su cantidad de elementos, es decir, el tamaño del árbol (size en inglés).
+sizeT EmptyT          = 0
+sizeT (NodeT _ ti td) = 1 + (sizeT ti) + (sizeT td)
+
+
+-- EJERCICIO 2.1.3:
+
+mapDobleT :: Tree Int -> Tree Int
+-- PROPÓSITO: Dado un árbol de enteros devuelve un árbol con el doble de cada número.
+mapDobleT EmptyT          = EmptyT
+mapDobleT (NodeT n ti td) = NodeT (n*2) (mapDobleT ti) (mapDobleT td)
+
+
+-- EJERCICIO 2.1.4:
+
+perteneceT :: Eq a => a -> Tree a -> Bool
+-- PROPÓSITO: Dados un elemento y un árbol binario devuelve True si existe un elemento igual a ese en el árbol.
+perteneceT x EmptyT          = False
+perteneceT x (NodeT y ti td) = (x == y) || perteneceT x ti || perteneceT x td
+
+
+-- EJERCICIO 2.1.5:
+
+aparicionesT :: Eq a => a -> Tree a -> Int
+-- PROPÓSITO: Dados un elemento e y un árbol binario devuelve la cantidad de elementos del árbol que son iguales a e.
+aparicionesT x EmptyT          = 0
+aparicionesT x (NodeT y ti td) = unoSi (x == y) + aparicionesT x ti + aparicionesT x td
+
+
+-- EJERCICIO 2.1.6:
+
+leaves :: Tree a -> [a]
+-- PROPÓSITO: Dado un árbol devuelve los elementos que se encuentran en sus hojas.
+-- NOTA: En este tipo se define como hoja a un nodo con dos hijos vacíos.
+leaves EmptyT                  = []
+leaves (NodeT x EmptyT EmptyT) = [x]
+leaves (NodeT _ ti     td)     = leaves ti ++ leaves td
+
+
+-- EJERCICIO 2.1.7:
+
+heightT :: Tree a -> Int
+-- PROPÓSITO: Dado un árbol devuelve su altura.
+-- NOTA: La altura de un árbol (height en inglés), también llamada profundidad, es la cantidad de niveles del árbol.
+--       La altura para EmptyT es 0, y para una hoja es 1.
+heightT EmptyT          = 0
+heightT (NodeT _ ti td) = 1 + max (heightT ti) (heightT td)
+
+
+-- EJERCICIO 2.1.8:
+
+mirrorT :: Tree a -> Tree a
+-- PROPÓSITO: Dado un árbol devuelve el árbol resultante de intercambiar el hijo izquierdo con el derecho, en cada nodo del árbol.
+mirrorT EmptyT          = EmptyT
+mirrorT (NodeT x ti td) = NodeT x (mirrorT td) (mirrorT ti)
+
+
+-- EJERCICIO 2.1.9:
+
+toList :: Tree a -> [a]
+-- PROPÓSITO: Dado un árbol devuelve una lista que representa el resultado de recorrerlo en modo in-order.
+-- NOTA: En el modo in-order primero se procesan los elementos del hijo izquierdo, luego la raiz y luego los elementos del hijo derecho.
+toList EmptyT          = []
+toList (NodeT x ti td) = toList ti ++ [x] ++ toList td
+
+
+-- EJERCICIO 2.1.10:
+
+levelN :: Int -> Tree a -> [a]
+-- PROPÓSITO: Dados un número n y un árbol devuelve una lista con los nodos de nivel n. El nivel de un nodo es la distancia que
+--            hay de la raíz hasta él. La distancia de la raiz a sí misma es 0, y la distancia de la raiz a uno de sus hijos es 1.
+-- NOTA: El primer nivel de un árbol (su raíz) es 0.
+levelN _ EmptyT          = []
+levelN 0 (NodeT x _  _)  = [x]
+levelN n (NodeT _ ti td) = levelN (n-1) ti ++ levelN (n-1) td 
+
+
+-- EJERCICIO 2.1.11:
+
+listPerLevel :: Tree a -> [[a]]
+-- PROPÓSITO: Dado un árbol devuelve una lista de listas en la que cada elemento representa un nivel de dicho árbol.
+listPerLevel EmptyT          = []
+listPerLevel (NodeT x ti td) = [x] : unirListas (listPerLevel ti) (listPerLevel td)
+
+unirListas :: [[a]] -> [[a]] -> [[a]]
+-- PROPÓSITO: Describe una lista de listas, resultado de la unión de las listas dadas.
+unirListas []       yss      = yss
+unirListas xss      []       = xss
+unirListas (xs:xss) (ys:yss) = (xs ++ ys) : unirListas xss yss   
+
+
+-- EJERCICIO 2.1.12:
+
+ramaMasLarga :: Tree a -> [a]
+-- PROPÓSITO: Devuelve los elementos de la rama más larga del árbol.
+ramaMasLarga EmptyT          = []
+ramaMasLarga (NodeT x ti td) = if heightT ti > heightT td
+                                  then x : ramaMasLarga ti
+                                  else x : ramaMasLarga td
+
+
+-- EJERCICIO 2.1.13:
+
+todosLosCaminos :: Tree a -> [[a]]
+-- PROPÓSITO: Dado un árbol devuelve todos los caminos, es decir, los caminos desde la raíz hasta cualquiera de los nodos.
+todosLosCaminos EmptyT          = []
+todosLosCaminos (NodeT x ti td) = [x] : (agregarA x (todosLosCaminos ti ++ todosLosCaminos td))
+
+agregarA :: a -> [[a]] -> [[a]]
+-- PROPÓSITO: Agrega el elemento en todas las listas de las listas de listas dada.
+agregarA x []       = []
+agregarA x (ys:yss) = (x:ys) : agregarA x yss
+
+
+-- EJERCICIO 2.2: Expresiones Aritméticas.
+
+data ExpA = Valor Int | Sum ExpA ExpA | Prod ExpA ExpA | Neg ExpA
+    deriving Show
+
+
+-- EJERCICIO 2.2.1:
+
+eval :: ExpA -> Int
+-- PROPÓSITO: Dada una expresión aritmética devuelve el resultado evaluarla.
+eval (Valor n)     = n
+eval (Sum   e1 e2) = (eval e1) + (eval e2)
+eval (Prod  e1 e2) = (eval e1) * (eval e2)
+eval (Neg   e1)    = (-1) * (eval e1) 
+
+-- EJERCICIO 2.2.2:
+
+simplificar :: ExpA -> ExpA
+-- PROPÓSITO: Dada una expresión aritmética, la simplifica según los siguientes criterios (descritos utilizando notación matemática convencional):
+simplificar (Valor n)     = Valor n
+simplificar (Sum   e1 e2) = sumaSimplificada (simplificar e1) (simplificar e2)
+simplificar (Prod  e1 e2) = productoSimplificado (simplificar e1) (simplificar e2)
+simplificar (Neg   e1)    = negacionSimplificada (simplificar e1) 
+
+sumaSimplificada :: ExpA -> ExpA -> ExpA
+-- PROPÓSITO: Describe la expresión aritmetica de la suma simplificada según el criterio descrito.
+sumaSimplificada (Valor 0) e2        = e2
+sumaSimplificada e1        (Valor 0) = e1
+sumaSimplificada e1        e2        = Sum e1 e2
+
+productoSimplificado :: ExpA -> ExpA -> ExpA
+-- PROPÓSITO: Describe la expresión aritmetica del producto simplificado según el criterio descrito.
+productoSimplificado (Valor 0) _         = Valor 0
+productoSimplificado _         (Valor 0) = Valor 0
+productoSimplificado (Valor 1) e2        = e2
+productoSimplificado e1        (Valor 1) = e1
+productoSimplificado e1        e2        = Prod e1 e2
+
+negacionSimplificada :: ExpA -> ExpA
+-- PROPÓSITO: Describe la expresión aritmetica de la negación simplificada según el criterio descrito.
+negacionSimplificada (Neg e1) = e1
+negacionSimplificada e1       = Neg e1
