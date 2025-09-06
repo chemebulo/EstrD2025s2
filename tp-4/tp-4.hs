@@ -6,9 +6,6 @@ data Pizza = Prepizza | Capa Ingrediente Pizza
 data Ingrediente = Salsa | Queso | Jamon | Aceitunas Int
     deriving Show
 
-pizza0 :: Pizza
-pizza0 = Capa (Aceitunas 9) (Capa Jamon (Capa Queso (Capa Salsa Prepizza)))
-
 
 -- EJERCICIO 1.1:
 
@@ -92,37 +89,149 @@ cantCapasPizza p = (cantidadDeCapas p, p)
 
 -- EJERCICIO 2: Mapa de Tesoros (con bifurcaciones).
 
+data Dir = Izq | Der
+    deriving Show
+
+data Objeto = Tesoro | Chatarra
+    deriving Show
+
+data Cofre = Cofre [Objeto]
+    deriving Show
+
+data Mapa = Fin Cofre | Bifurcacion Cofre Mapa Mapa
+    deriving Show
+
+mapa0 :: Mapa
+mapa0 = Bifurcacion (Cofre [Chatarra, Chatarra, Tesoro, Tesoro]) 
+            (Bifurcacion (Cofre [Chatarra, Tesoro]) 
+                    (Bifurcacion (Cofre[Tesoro])
+                        (Fin (Cofre[]))
+                        (Fin (Cofre[Tesoro]))
+                    )
+                    (Fin (Cofre[Tesoro]))
+            )
+            (Fin (Cofre[])) 
 
 
 -- EJERCICIO 2.1:
 
+hayTesoro :: Mapa -> Bool
+-- PROPÓSTIO: Indica si hay un tesoro en alguna parte del mapa.
+hayTesoro (Fin c)               = hayTesoroEnC c
+hayTesoro (Bifurcacion c m1 m2) = hayTesoroEnC c || hayTesoro m1 || hayTesoro m2
+
+hayTesoroEnC :: Cofre -> Bool
+-- PROPÓSITO: Indica si hay un tesoro en el cofre dado.
+hayTesoroEnC (Cofre os) = hayTesoroEnOS os
+
+hayTesoroEnOS :: [Objeto] -> Bool
+-- PROPÓSITO: Indica si hay un tesoro en la lista de objetos dada.
+hayTesoroEnOS []     = False
+hayTesoroEnOS (o:os) = esTesoro o || hayTesoroEnOS os
+
+esTesoro :: Objeto -> Bool
+-- PROPÓSITO: Indica si el objeto dado es un tesoro.
+esTesoro Tesoro = True
+esTesoro _      = False
 
 
 -- EJERCICIO 2.2:
 
+hayTesoroEn :: [Dir] -> Mapa -> Bool
+-- PROPÓSTIO: Indica si al final del camino hay un tesoro. 
+-- NOTA: El final de un camino se representa con una lista vacía de direcciones.
+hayTesoroEn _      (Fin c)               = hayTesoroEnC c
+hayTesoroEn []     (Bifurcacion c _ _)   = hayTesoroEnC c
+hayTesoroEn (d:ds) (Bifurcacion _ m1 m2) = case d of    
+                                             Izq -> hayTesoroEn ds m1
+                                             Der -> hayTesoroEn ds m2
 
 
 -- EJERCICIO 2.3:
 
+caminoAlTesoro :: Mapa -> [Dir]
+-- PROPÓSTIO: Indica el camino al tesoro. 
+-- PRECONDICIÓN: Existe un tesoro y es único.
+caminoAlTesoro (Fin _)               = []
+caminoAlTesoro (Bifurcacion c m1 m2) = if hayTesoroEnC c 
+                                          then []
+                                          else if hayTesoro m1
+                                                  then Izq : caminoAlTesoro m1
+                                                  else Der : caminoAlTesoro m2
 
 
 -- EJERCICIO 2.4:
 
+caminoDeLaRamaMasLarga :: Mapa -> [Dir]
+-- PROPÓSTIO: Indica el camino de la rama más larga.
+caminoDeLaRamaMasLarga (Fin c)               = []
+caminoDeLaRamaMasLarga (Bifurcacion c m1 m2) = let caminoRamaIzq = caminoDeLaRamaMasLarga m1;
+                                                   caminoRamaDer = caminoDeLaRamaMasLarga m2
+                                                in if length caminoRamaIzq > length caminoRamaDer
+                                                      then Izq : caminoRamaIzq
+                                                      else Der : caminoRamaDer 
 
 
 -- EJERCICIO 2.5:
 
+tesorosPorNivel :: Mapa -> [[Objeto]]
+-- PROPÓSTIO: Devuelve los tesoros separados por nivel en el árbol.
+tesorosPorNivel (Fin c)               = [tesorosEn c]
+tesorosPorNivel (Bifurcacion c m1 m2) = tesorosEn c : unirListas (tesorosPorNivel m1) (tesorosPorNivel m2)
+
+tesorosEn :: Cofre -> [Objeto]
+-- PROPÓSITO: Describe los tesoros que hay en el cofre dado.
+tesorosEn (Cofre os) = tesorosEnOS os
+
+tesorosEnOS :: [Objeto] -> [Objeto]
+-- PROPÓSITO: Describe los tesoros que hay en la lista de objetos dada.
+tesorosEnOS []     = []
+tesorosEnOS (o:os) = if esTesoro o
+                        then o : tesorosEnOS os
+                        else tesorosEnOS os
+
+unirListas :: [[a]] -> [[a]] -> [[a]]
+-- PROPÓSITO: Describe una lista de listas, resultado de la unión de las listas dadas.
+unirListas []       yss      = yss
+unirListas xss      []       = xss
+unirListas (xs:xss) (ys:yss) = (xs ++ ys) : unirListas xss yss   
 
 
 -- EJERCICIO 2.6:
 
+todosLosCaminos :: Mapa -> [[Dir]]
+-- PROPÓSTIO: Devuelve todos lo caminos en el mapa.
+todosLosCaminos (Fin _)               = []
+todosLosCaminos (Bifurcacion _ m1 m2) = ([Izq] : agregarA Izq (todosLosCaminos m1)) ++ 
+                                        ([Der] : agregarA Der (todosLosCaminos m2))
 
-
+agregarA :: a -> [[a]] -> [[a]]
+-- PROPÓSITO: Agrega el elemento en todas las listas de las listas de listas dada.
+agregarA x []       = []
+agregarA x (ys:yss) = (x:ys) : agregarA x yss
 
 -- ####################################################################################################################### --
 
 -- EJERCICIO 3: Nave Espacial.
 
+data Componente = LanzaTorpedos | Motor Int | Almacen [Barril]
+    deriving Show
+
+data Barril = Comida | Oxigeno | Torpedo | Combustible
+    deriving Show
+
+data Sector = S SectorId [Componente] [Tripulante]
+    deriving Show
+
+type SectorId = String
+
+type Tripulante = String
+
+data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
+    deriving Show
+
+data Nave = N (Tree Sector)
+    deriving Show
 
 
 -- EJERCICIO 3.1:
