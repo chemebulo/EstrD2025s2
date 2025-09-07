@@ -101,17 +101,6 @@ data Cofre = Cofre [Objeto]
 data Mapa = Fin Cofre | Bifurcacion Cofre Mapa Mapa
     deriving Show
 
-mapa0 :: Mapa
-mapa0 = Bifurcacion (Cofre [Chatarra, Chatarra, Tesoro, Tesoro]) 
-            (Bifurcacion (Cofre [Chatarra, Tesoro]) 
-                    (Bifurcacion (Cofre[Tesoro])
-                        (Fin (Cofre[]))
-                        (Fin (Cofre[Tesoro]))
-                    )
-                    (Fin (Cofre[Tesoro]))
-            )
-            (Fin (Cofre[])) 
-
 
 -- EJERCICIO 2.1:
 
@@ -210,6 +199,7 @@ agregarA :: a -> [[a]] -> [[a]]
 agregarA x []       = []
 agregarA x (ys:yss) = (x:ys) : agregarA x yss
 
+
 -- ####################################################################################################################### --
 
 -- EJERCICIO 3: Nave Espacial.
@@ -233,59 +223,233 @@ data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
 data Nave = N (Tree Sector)
     deriving Show
 
+nave0 :: Nave
+nave0 = N (NodeT (S "a920" [LanzaTorpedos, (Almacen [Torpedo, Oxigeno])] ["emilia", "enrique", "enriqueta"]) 
+                (NodeT (S "34b0" [(Almacen [Torpedo, Comida, Comida]), (Motor 120)] ["enriqueta", "lewis"]) EmptyT EmptyT)
+                (NodeT (S "890ab" [(Almacen [Combustible, Comida]), (Motor 450)] ["emilia", "enriqueta", "xing"]) EmptyT EmptyT))
 
 -- EJERCICIO 3.1:
 
+sectores :: Nave -> [SectorId]
+-- PROPÓSITO: Devuelve todos los sectores de la nave.
+sectores (N ts) = sectoresDeTS ts
+
+sectoresDeTS :: Tree Sector -> [SectorId]
+-- PROPÓSITO: Describe todos los sectores del árbol dado.
+sectoresDeTS EmptyT            = []
+sectoresDeTS (NodeT s tsi tsd) = sectorIDS s : (sectoresDeTS tsi ++ sectoresDeTS tsd)
+
+sectorIDS :: Sector -> SectorId
+-- PROPÓSITO: Describe el SectorId del Sector dado.
+sectorIDS (S sid _ _) = sid
 
 
 -- EJERCICIO 3.2:
 
+poderDePropulsion :: Nave -> Int
+-- PROPÓSITO: Devuelve la suma de poder de propulsión de todos los motores de la nave. 
+-- NOTA: El poder de propulsión es el número que acompaña al constructor de motores.
+poderDePropulsion (N ts) = poderDePropulsionDeTS ts
+
+poderDePropulsionDeTS :: Tree Sector -> Int
+-- PROPÓSITO: Describe la suma de poder de propulsión de todos los motores del árbol dado.
+poderDePropulsionDeTS EmptyT            = 0
+poderDePropulsionDeTS (NodeT s tsi tsd) = poderDePropulsionDeS s + poderDePropulsionDeTS tsi + poderDePropulsionDeTS tsd
+
+poderDePropulsionDeS :: Sector -> Int
+-- PROPÓSITO: Describe la suma de poder de propulsión del sector dado.
+poderDePropulsionDeS (S _ cs _) = poderDePropulsionDeCS cs
+
+poderDePropulsionDeCS :: [Componente] -> Int
+-- PROPÓSITO: Describe la suma de poder de propulsión de la lista de componentes dada.
+poderDePropulsionDeCS []     = 0
+poderDePropulsionDeCS (c:cs) = poderDePropulsionDeC c + poderDePropulsionDeCS cs
+
+poderDePropulsionDeC :: Componente -> Int
+-- PROPÓSITO: Describe el poder de propulsión del componente dado.
+poderDePropulsionDeC (Motor n) = n
+poderDePropulsionDeC _         = 0
 
 
 -- EJERCICIO 3.3:
 
+barriles :: Nave -> [Barril]
+-- PROPÓSITO: Devuelve todos los barriles de la nave.
+barriles (N ts) = barrilesDeTS ts
+
+barrilesDeTS :: Tree Sector -> [Barril]
+-- PROPÓSITO: Describe todos los barriles del árbol dado.
+barrilesDeTS EmptyT            = []
+barrilesDeTS (NodeT s tsi tsd) = barrilesDeS s ++ barrilesDeTS tsi ++ barrilesDeTS tsd
+
+barrilesDeS :: Sector -> [Barril]
+-- PROPÓSITO: Describe todos los barriles del sector dado.
+barrilesDeS (S _ cs _) = barrilesDeCS cs
+
+barrilesDeCS :: [Componente] -> [Barril]
+-- PROPÓSITO: Describe todos los barriles de la lista de componentes dada.
+barrilesDeCS []     = []
+barrilesDeCS (c:cs) = barrilesDeC c ++ barrilesDeCS cs
+
+barrilesDeC :: Componente -> [Barril]
+-- PROPÓSITO: Describe el barril del componente dado (si es que es un almacen).
+barrilesDeC (Almacen bs) = bs
+barrilesDeC _            = []
 
 
 -- EJERCICIO 3.4:
 
+agregarASector :: [Componente] -> SectorId -> Nave -> Nave
+-- PROPÓSITO: Añade una lista de componentes a un sector de la nave.
+-- NOTA: Ese sector puede no existir, en cuyo caso no añade componentes.
+agregarASector cs sid (N ts) = N (agregarASectorTS cs sid ts)
+
+agregarASectorTS :: [Componente] -> SectorId -> Tree Sector -> Tree Sector
+-- PROPÓSITO: Añade una lista de componentes a un sector de la nave.
+agregarASectorTS _  _   EmptyT            = EmptyT
+agregarASectorTS cs sid (NodeT s tsi tsd) = if (sectorIDS s) == sid
+                                               then NodeT (agregarASectorS cs s) tsi tsd
+                                               else NodeT s (agregarASectorTS cs sid tsi) (agregarASectorTS cs sid tsd)
+
+agregarASectorS :: [Componente] -> Sector -> Sector
+-- PROPÓSITO: Añade una lista de componentes al Sector dado.
+agregarASectorS cs1 (S sid cs2 ts) = S sid (cs2 ++ cs1) ts
 
 
 -- EJERCICIO 3.5:
 
+asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
+-- PROPÓSITO: Incorpora un tripulante a una lista de sectores de la nave.
+-- PRECONDICIÓN: Todos los id de la lista existen en la nave.
+asignarTripulanteA t sids (N ts) = N (asignarTripulanteATS t sids ts)
+
+asignarTripulanteATS :: Tripulante -> [SectorId] -> Tree Sector -> Tree Sector
+-- PROPÓSITO: Incorpora el tripulante dado a una lista de sectores del árbol dado.
+asignarTripulanteATS _ _    EmptyT            = EmptyT
+asignarTripulanteATS t sids (NodeT s tsi tsd) = if elem (sectorIDS s) sids
+                                                   then NodeT (asignarTripulanteAS t s) (asignarTripulanteATS t sids tsi) 
+                                                                                        (asignarTripulanteATS t sids tsd)
+                                                   else NodeT s (asignarTripulanteATS t sids tsi) 
+                                                                (asignarTripulanteATS t sids tsd)
+
+asignarTripulanteAS :: Tripulante -> Sector -> Sector
+-- PROPÓSITO: Incorpora el tripulante dado al sector dado.
+asignarTripulanteAS t (S sid cs ts) = S sid cs (t:ts)
 
 
 -- EJERCICIO 3.6:
 
+sectoresAsignados :: Tripulante -> Nave -> [SectorId]
+-- PROPÓSITO: Devuelve los sectores en donde aparece un tripulante dado.
+sectoresAsignados t (N ts) = sectoresAsignadosTS t ts
+
+sectoresAsignadosTS :: Tripulante -> Tree Sector -> [SectorId]
+-- PROPÓSITO: Describe todos los sectores en donde aparece el tripulante dado.
+sectoresAsignadosTS t EmptyT            = []
+sectoresAsignadosTS t (NodeT s tsi tsd) = if estaTripulanteEnS t s
+                                             then sectorIDS s : (sectoresAsignadosTS t tsi ++ sectoresAsignadosTS t tsd)
+                                             else sectoresAsignadosTS t tsi ++ sectoresAsignadosTS t tsd
+
+estaTripulanteEnS :: Tripulante -> Sector -> Bool
+-- PROPÓSITO: Indica si el tripulante dado se encuentra en el sector dado.
+estaTripulanteEnS t (S _ _ ts) = elem t ts
 
 
 -- EJERCICIO 3.7:
 
+tripulantes :: Nave -> [Tripulante]
+-- PROPÓSITO: Devuelve la lista de tripulantes, sin elementos repetidos.
+tripulantes (N ts) = tripulantesTS ts
+
+tripulantesTS :: Tree Sector -> [Tripulante]
+-- PROPÓSITO: Describe la lista de tripulantes que se encuentran en el árbol dado.
+tripulantesTS EmptyT            = []
+tripulantesTS (NodeT s tsi tsd) = unionSinRepeticiones (tripulantesS s) (unionSinRepeticiones (tripulantesTS tsi) (tripulantesTS tsd))
+
+tripulantesS :: Sector -> [Tripulante]
+tripulantesS (S _ _ ts) = ts
+
+unionSinRepeticiones :: Eq a => [a] -> [a] -> [a]
+-- PROPÓSITO: Une los elementos de la primera lista a los de la segunda sin repetir.
+unionSinRepeticiones []     ys = ys  
+unionSinRepeticiones xs     [] = xs
+unionSinRepeticiones (x:xs) ys = if elem x ys
+                                    then unionSinRepeticiones xs ys
+                                    else x : unionSinRepeticiones xs ys 
 
 
 -- ####################################################################################################################### --
 
 -- EJERCICIO 4: Manada de Lobos.
 
+type Presa      = String -- Nombre de presa.
+type Territorio = String -- Nombre de territorio.
+type Nombre     = String -- Nombre de lobo.
+
+data Lobo = Cazador Nombre [Presa] Lobo Lobo Lobo | Explorador Nombre [Territorio] Lobo Lobo | Cria Nombre
+    deriving Show
+
+data Manada = M Lobo
+    deriving Show
 
 
 -- EJERCICIO 4.1:
 
+loberioFeroz :: Manada
+loberioFeroz = M (Cazador "Colmillonatan" ["Despistadeo", "Perezosandra", "Papanatalia"]
+                    (Cria "Chiquilin") (Explorador "Astutobias" ["Parque Yellowstone", "Bosque Verdoso"] 
+                                            (Cria "Enanin") (Explorador "Astutomas" ["Bosque Verdoso", "Rio Azulado"]
+                                                            (Cria "Petisin") (Cria "Chiquirrin"))) 
+                                       (Cria "Chiquitin"))
+
+lobosLocos :: Lobo
+lobosLocos = (Cazador "Colmillonatan" ["Despistadeo", "Perezosandra", "Papanatalia"]
+                (Cria "Chiquilin") 
+                (Explorador "Astutobias" ["Parque Yellowstone", "Rio Mojado"] 
+                    (Cria "Enanin") 
+                    (Explorador "Astutomas" ["Bosque Verdoso", "Rio Azulado"]
+                        (Cria "Petisin") 
+                        (Cria "Chiquirrin")
+                    )
+                ) 
+                (Cria "Chiquitin")
+             )     
 
 
 -- EJERCICIO 4.2:
 
+buenaCaza :: Manada -> Bool
+-- PROPÓSITO: Dada una manada, indica si la cantidad de alimento cazado es mayor a la cantidad de crías.
+buenaCaza = undefined
 
 
 -- EJERCICIO 4.3:
 
+elAlfa :: Manada -> (Nombre, Int)
+-- PROPÓSITO: Dada una manada, devuelve el nombre del lobo con más presas cazadas, junto con su cantidad de presas. 
+-- NOTA: Se considera que los exploradores y crías tienen cero presas cazadas, y que po drían formar parte del resultado 
+--       si es que no existen cazadores con más de cero presas.
+elAlfa = undefined
 
 
 -- EJERCICIO 4.4:
 
+losQueExploraron :: Territorio -> Manada -> [Nombre]
+-- PROPÓSITO: Dado un territorio y una manada, devuelve los nombres de los exploradores que pasaron por dicho territorio.
+losQueExploraron = undefined
 
 
 -- EJERCICIO 4.5:
 
-
+exploradoresPorTerritorio :: Manada -> [(Territorio, [Nombre])]
+-- PROPÓSITO: Dada una manada, denota la lista de los pares cuyo primer elemento es un territorio y cuyo segundo elemento es
+--            la lista de los nombres de los exploradores que exploraron dicho territorio. Los territorios no deb en repetirse.
+exploradoresPorTerritorio = undefined
 
 -- EJERCICIO 4.6:
+
+cazadoresSuperioresDe :: Nombre -> Manada -> [Nombre]
+-- PROPÓSITO: Dado el nombre de un lobo y una manada, indica el nombre de todos los cazadores que tienen como subordinado al
+--            lobo dado (puede ser un subordinado directo, o el subordinado de un subordinado).
+-- PRECONDICIÓN: Hay un lobo con dicho nombre y es único.
+cazadoresSuperioresDe = undefined
