@@ -395,56 +395,125 @@ data Manada = M Lobo
 
 -- EJERCICIO 4.1:
 
-loberioFeroz :: Manada
-loberioFeroz = M (Cazador "Colmillonatan" ["Despistadeo", "Perezosandra", "Papanatalia"]
-                    (Cria "Chiquilin") (Explorador "Astutobias" ["Parque Yellowstone", "Bosque Verdoso"] 
-                                            (Cria "Enanin") (Explorador "Astutomas" ["Bosque Verdoso", "Rio Azulado"]
-                                                            (Cria "Petisin") (Cria "Chiquirrin"))) 
-                                       (Cria "Chiquitin"))
-
-lobosLocos :: Lobo
-lobosLocos = (Cazador "Colmillonatan" ["Despistadeo", "Perezosandra", "Papanatalia"]
-                (Cria "Chiquilin") 
-                (Explorador "Astutobias" ["Parque Yellowstone", "Rio Mojado"] 
-                    (Cria "Enanin") 
-                    (Explorador "Astutomas" ["Bosque Verdoso", "Rio Azulado"]
-                        (Cria "Petisin") 
-                        (Cria "Chiquirrin")
+manadaEj :: Manada
+manadaEj = M (Cazador "DienteFiloso" ["Bufalos", "Antilopes"]
+                (Cria "Hopito")
+                (Explorador "Incansable" ["Oeste hasta el rio"]
+                    (Cria "MechonGris")
+                    (Cria "Rabito")
+                )
+                (Cazador "Garras" ["Antilopes", "Ciervos"]
+                    (Explorador "Zarpado" ["Bosque este"]
+                        (Cria "Osado")
+                        (Cazador "Mandibulas" ["Cerdos", "Pavos"]
+                            (Cria "Desgreñado")
+                            (Cria "Malcriado")
+                            (Cazador "TrituraHuesos" ["Conejos"]
+                                (Cria "Peludo")
+                                (Cria "Largo")
+                                (Cria "Menudo")
+                            )
+                        )
                     )
-                ) 
-                (Cria "Chiquitin")
-             )     
+                    (Cria "Garrita")
+                    (Cria "Manchas")
+                )
+            )
 
 
 -- EJERCICIO 4.2:
 
 buenaCaza :: Manada -> Bool
 -- PROPÓSITO: Dada una manada, indica si la cantidad de alimento cazado es mayor a la cantidad de crías.
-buenaCaza = undefined
+buenaCaza (M l) = cantidadAlimentoCazadoL l > cantidadDeCriasL l
+
+cantidadAlimentoCazadoL :: Lobo -> Int
+-- PROPÓSITO: Describe la cantidad de alimento cazado por el lobo dado.
+cantidadAlimentoCazadoL (Cria _)                = 0
+cantidadAlimentoCazadoL (Explorador _ _  l1 l2) = cantidadAlimentoCazadoL l1 + cantidadAlimentoCazadoL l2
+cantidadAlimentoCazadoL (Cazador _ ps l1 l2 l3) = let cantidadAlimento = length ps
+                                                   in cantidadAlimento + cantidadAlimentoCazadoL l1
+                                                                       + cantidadAlimentoCazadoL l2
+                                                                       + cantidadAlimentoCazadoL l3
+
+cantidadDeCriasL :: Lobo -> Int
+-- PROPÓSITO: Describe la cantidad de crias que tiene el lobo dado.
+cantidadDeCriasL (Cria _)                = 1
+cantidadDeCriasL (Explorador _ _  l1 l2) = cantidadDeCriasL l1 + cantidadDeCriasL l2
+cantidadDeCriasL (Cazador _ ps l1 l2 l3) = cantidadDeCriasL l1 + cantidadDeCriasL l2 + cantidadDeCriasL l3
 
 
 -- EJERCICIO 4.3:
 
 elAlfa :: Manada -> (Nombre, Int)
 -- PROPÓSITO: Dada una manada, devuelve el nombre del lobo con más presas cazadas, junto con su cantidad de presas. 
--- NOTA: Se considera que los exploradores y crías tienen cero presas cazadas, y que po drían formar parte del resultado 
+-- NOTA: Se considera que los exploradores y crías tienen cero presas cazadas, y que podrían formar parte del resultado 
 --       si es que no existen cazadores con más de cero presas.
-elAlfa = undefined
+elAlfa (M l) = elAlfaL l
 
+elAlfaL :: Lobo -> (Nombre, Int)
+-- PROPÓSITO: Dado un lobo, devuelve el nombre del lobo con más presas cazadas, junto con su cantidad de presas.
+elAlfaL (Cria n)                = (n, 0) 
+elAlfaL (Explorador n _  l1 l2) = let loboActual = (n, 0);
+                                      loboUno  = elAlfaL l1;
+                                      loboDos  = elAlfaL l2;
+                                   in elAlfaEntre loboActual (elAlfaEntre loboDos loboUno)
+elAlfaL (Cazador n ps l1 l2 l3) = let loboActual = (n, (length ps));
+                                      loboUno  = elAlfaL l1;
+                                      loboDos  = elAlfaL l2;
+                                      loboTres = elAlfaL l3;
+                                   in elAlfaEntre loboActual (elAlfaEntre loboTres (elAlfaEntre loboDos loboUno))
+
+elAlfaEntre :: (Nombre, Int) -> (Nombre, Int) -> (Nombre, Int)
+-- PROPÓSITO: Describe el alfa entre dos pares que representa el nombre del lobo con la cantidad de presas cazadas.
+elAlfaEntre (nom1, cp1) (nom2, cp2) = if cp1 > cp2
+                                         then (nom1, cp1)
+                                         else (nom2, cp2)
+ 
 
 -- EJERCICIO 4.4:
 
 losQueExploraron :: Territorio -> Manada -> [Nombre]
 -- PROPÓSITO: Dado un territorio y una manada, devuelve los nombres de los exploradores que pasaron por dicho territorio.
-losQueExploraron = undefined
+losQueExploraron t (M l) = losQueExploraronL t l
+
+losQueExploraronL :: Territorio -> Lobo -> [Nombre]
+losQueExploraronL t (Cria _)                = []
+losQueExploraronL t (Explorador n ts l1 l2) = if elem t ts
+                                                 then n : losQueExploraronL t l1 ++ losQueExploraronL t l2
+                                                 else losQueExploraronL t l1 ++ losQueExploraronL t l2
+losQueExploraronL t (Cazador _ _  l1 l2 l3) = losQueExploraronL t l1 ++ losQueExploraronL t l2 ++ losQueExploraronL t l3  
 
 
 -- EJERCICIO 4.5:
 
 exploradoresPorTerritorio :: Manada -> [(Territorio, [Nombre])]
 -- PROPÓSITO: Dada una manada, denota la lista de los pares cuyo primer elemento es un territorio y cuyo segundo elemento es
---            la lista de los nombres de los exploradores que exploraron dicho territorio. Los territorios no deb en repetirse.
-exploradoresPorTerritorio = undefined
+--            la lista de los nombres de los exploradores que exploraron dicho territorio. Los territorios no deben repetirse.
+exploradoresPorTerritorio (M l) = exploradoresPorTerritorioL l
+
+exploradoresPorTerritorioL :: Lobo -> [(Territorio, [Nombre])]
+-- PROPÓSITO: Describe la lista de pares cuyo primer elemento es un territorio y cuyo segundo elemento es una lista de nombres
+--            de exploradores que exploraron dicho territorio. 
+exploradoresPorTerritorioL (Cria _)                = []
+exploradoresPorTerritorioL (Explorador n ts l1 l2) = agregarNombreA n ts (exploradoresPorTerritorioL l1 ++ 
+                                                                         exploradoresPorTerritorioL l2)
+exploradoresPorTerritorioL (Cazador _ _  l1 l2 l3) = exploradoresPorTerritorioL l1 ++ 
+                                                     exploradoresPorTerritorioL l2 ++
+                                                     exploradoresPorTerritorioL l3   
+
+agregarNombreA :: Nombre -> [Territorio] -> [(Territorio, [Nombre])] -> [(Territorio, [Nombre])]
+-- PROPÓSITO: Agrega el nombre dado a la lista de territorios dados en la lista de pares territorio nombres dada.
+agregarNombreA n []     tss1 = tss1 
+agregarNombreA n (t:ts) tss1 = agregarATerritorio n t (agregarNombreA n ts tss1)
+
+agregarATerritorio :: Nombre -> Territorio -> [(Territorio, [Nombre])] -> [(Territorio, [Nombre])]
+-- PROPÓSITO: Describe la lista de pares territorio y nombres resultante de agregar el nombre dado al territorio dado.
+agregarATerritorio n ter []             = [(ter, [n])]
+agregarATerritorio n ter ((t, ns):tss1) = if (ter == t)
+                                             then (t, n:ns) : tss1
+                                             else (t, ns) : agregarATerritorio n ter tss1
+
 
 -- EJERCICIO 4.6:
 
@@ -452,4 +521,22 @@ cazadoresSuperioresDe :: Nombre -> Manada -> [Nombre]
 -- PROPÓSITO: Dado el nombre de un lobo y una manada, indica el nombre de todos los cazadores que tienen como subordinado al
 --            lobo dado (puede ser un subordinado directo, o el subordinado de un subordinado).
 -- PRECONDICIÓN: Hay un lobo con dicho nombre y es único.
-cazadoresSuperioresDe = undefined
+cazadoresSuperioresDe n (M l) = cazadoresSuperioresDeL n l
+
+cazadoresSuperioresDeL :: Nombre -> Lobo -> [Nombre]
+-- PROPÓSITO: Describe una lista de nombres de los cazadores que tinen como subordinado al nombre dado.
+cazadoresSuperioresDeL nom (Cria _)               = []
+cazadoresSuperioresDeL nom (Explorador _ _ l1 l2) = cazadoresSuperioresDeL nom l1 ++ cazadoresSuperioresDeL nom l2
+cazadoresSuperioresDeL nom (Cazador n _ l1 l2 l3) = if esSubordinadoEn nom l1 || esSubordinadoEn nom l2 || esSubordinadoEn nom l3
+                                                       then n : cazadoresSuperioresDeL nom l1 ++ 
+                                                                cazadoresSuperioresDeL nom l2 ++ 
+                                                                cazadoresSuperioresDeL nom l3
+                                                       else cazadoresSuperioresDeL nom l1 ++
+                                                            cazadoresSuperioresDeL nom l2 ++
+                                                            cazadoresSuperioresDeL nom l3
+
+esSubordinadoEn :: Nombre -> Lobo -> Bool
+-- PROPÓSITO: Indica si el nombre dado es subordinado desde el lobo dado.
+esSubordinadoEn nom (Cria n)               = (nom == n)
+esSubordinadoEn nom (Explorador n _ l1 l2) = (nom == n) || esSubordinadoEn nom l1 || esSubordinadoEn nom l2 
+esSubordinadoEn nom (Cazador n _ l1 l2 l3) = (nom == n) || esSubordinadoEn nom l1 || esSubordinadoEn nom l2 || esSubordinadoEn nom l3
