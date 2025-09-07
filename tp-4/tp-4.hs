@@ -223,10 +223,6 @@ data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
 data Nave = N (Tree Sector)
     deriving Show
 
-nave0 :: Nave
-nave0 = N (NodeT (S "a920" [LanzaTorpedos, (Almacen [Torpedo, Oxigeno])] ["emilia", "enrique", "enriqueta"]) 
-                (NodeT (S "34b0" [(Almacen [Torpedo, Comida, Comida]), (Motor 120)] ["enriqueta", "lewis"]) EmptyT EmptyT)
-                (NodeT (S "890ab" [(Almacen [Combustible, Comida]), (Motor 450)] ["emilia", "enriqueta", "xing"]) EmptyT EmptyT))
 
 -- EJERCICIO 3.1:
 
