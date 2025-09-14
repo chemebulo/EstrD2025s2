@@ -421,22 +421,19 @@ manadaEj = M (Cazador "DienteFiloso" ["Bufalos", "Antilopes"]
 
 buenaCaza :: Manada -> Bool
 -- PROPÓSITO: Dada una manada, indica si la cantidad de alimento cazado es mayor a la cantidad de crías.
-buenaCaza (M l) = cantidadAlimentoCazadoL l > cantidadDeCriasL l
+buenaCaza (M l) = let (alc, cri) = cantidadComidaYCriasEnL l
+                   in alc > cri
 
-cantidadAlimentoCazadoL :: Lobo -> Int
--- PROPÓSITO: Describe la cantidad de alimento cazado por el lobo dado.
-cantidadAlimentoCazadoL (Cria _)                = 0
-cantidadAlimentoCazadoL (Explorador _ _  l1 l2) = cantidadAlimentoCazadoL l1 + cantidadAlimentoCazadoL l2
-cantidadAlimentoCazadoL (Cazador _ ps l1 l2 l3) = let cantidadAlimento = length ps
-                                                   in cantidadAlimento + cantidadAlimentoCazadoL l1
-                                                                       + cantidadAlimentoCazadoL l2
-                                                                       + cantidadAlimentoCazadoL l3
-
-cantidadDeCriasL :: Lobo -> Int
--- PROPÓSITO: Describe la cantidad de crias que tiene el lobo dado.
-cantidadDeCriasL (Cria _)                = 1
-cantidadDeCriasL (Explorador _ _  l1 l2) = cantidadDeCriasL l1 + cantidadDeCriasL l2
-cantidadDeCriasL (Cazador _ ps l1 l2 l3) = cantidadDeCriasL l1 + cantidadDeCriasL l2 + cantidadDeCriasL l3
+cantidadComidaYCriasEnL :: Lobo -> (Int, Int)
+-- PROPÓSITO: Describe un par que la primer componente es la cantidad de comida y la segunda la cantidad de crías que hay en el lobo dado.
+cantidadComidaYCriasEnL (Cria _)                = (0,1)
+cantidadComidaYCriasEnL (Explorador _ _  l1 l2) = let (a1, c1) = cantidadComidaYCriasEnL l1;
+                                                      (a2, c2) = cantidadComidaYCriasEnL l2
+                                                   in (a1 + a2, c1 + c2)
+cantidadComidaYCriasEnL (Cazador _ ps l1 l2 l3) = let (a1, c1) = cantidadComidaYCriasEnL l1;
+                                                      (a2, c2) = cantidadComidaYCriasEnL l2;
+                                                      (a3, c3) = cantidadComidaYCriasEnL l3
+                                                   in (length ps + a1 + a2 + a3, c1 + c2 + c3)
 
 
 -- EJERCICIO 4.3:
@@ -462,9 +459,9 @@ elAlfaL (Cazador n ps l1 l2 l3) = let loboActual = (n, (length ps));
 
 elAlfaEntre :: (Nombre, Int) -> (Nombre, Int) -> (Nombre, Int)
 -- PROPÓSITO: Describe el alfa entre dos pares que representa el nombre del lobo con la cantidad de presas cazadas.
-elAlfaEntre (nom1, cp1) (nom2, cp2) = if cp1 > cp2
-                                         then (nom1, cp1)
-                                         else (nom2, cp2)
+elAlfaEntre (n1, cps1) (n2, cps2) = if cps1 > cps2
+                                       then (n1, cps1)
+                                       else (n2, cps2)
  
 
 -- EJERCICIO 4.4:
@@ -500,15 +497,15 @@ exploradoresPorTerritorioL (Cazador _ _  l1 l2 l3) = exploradoresPorTerritorioL 
 
 agregarNombreA :: Nombre -> [Territorio] -> [(Territorio, [Nombre])] -> [(Territorio, [Nombre])]
 -- PROPÓSITO: Agrega el nombre dado a la lista de territorios dados en la lista de pares territorio nombres dada.
-agregarNombreA n []     tss1 = tss1 
-agregarNombreA n (t:ts) tss1 = agregarATerritorio n t (agregarNombreA n ts tss1)
+agregarNombreA n []     tss = tss
+agregarNombreA n (t:ts) tss = agregarATerritorio n t (agregarNombreA n ts tss)
 
 agregarATerritorio :: Nombre -> Territorio -> [(Territorio, [Nombre])] -> [(Territorio, [Nombre])]
 -- PROPÓSITO: Describe la lista de pares territorio y nombres resultante de agregar el nombre dado al territorio dado.
-agregarATerritorio n ter []             = [(ter, [n])]
-agregarATerritorio n ter ((t, ns):tss1) = if (ter == t)
-                                             then (t, n:ns) : tss1
-                                             else (t, ns) : agregarATerritorio n ter tss1
+agregarATerritorio n t []             = [(t, [n])]
+agregarATerritorio n t ((t', ns):tss) = if t == t'
+                                           then (t', n:ns) : tss
+                                           else (t', ns) : agregarATerritorio n t tss
 
 
 -- EJERCICIO 4.6:
