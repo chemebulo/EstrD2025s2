@@ -111,13 +111,10 @@ hayTesoroEn n (Cofre _ cam) = hayTesoroEn (n-1) cam
 
 alMenosNTesoros :: Int -> Camino -> Bool
 -- PROPÓSITO: Indica si hay al menos "n" tesoros en el camino
-alMenosNTesoros n cam = cantidadDeTesorosEn cam >= n
-
-cantidadDeTesorosEn :: Camino -> Int
--- PROPÓSITO: Describe la cantidad de tesoros que hay en el camino dado.
-cantidadDeTesorosEn Fin            = 0
-cantidadDeTesorosEn (Nada cam)     = cantidadDeTesorosEn cam
-cantidadDeTesorosEn (Cofre os cam) = cantidadDeTesoros os + cantidadDeTesorosEn cam 
+alMenosNTesoros 0 _              = True
+alMenosNTesoros n Fin            = False
+alMenosNTesoros n (Nada cam)     = alMenosNTesoros n cam
+alMenosNTesoros n (Cofre os cam) = n <= (cantidadDeTesoros os) || alMenosNTesoros (n - (cantidadDeTesoros os)) cam
 
 cantidadDeTesoros :: [Objeto] -> Int
 -- PROPÓSITO: Describe la cantidad de tesoros que hay en la lista de objetos dada.
@@ -133,10 +130,12 @@ cantTesorosEntre :: Int -> Int -> Camino -> Int
 -- PRECONDICIÓN: Siendo n el primer número dado, y m el segundo: n <= m.
 cantTesorosEntre _  _  Fin            = 0
 cantTesorosEntre 0  0  _              = 0
-cantTesorosEntre 0  n2 (Nada cam)     = cantTesorosEntre 0 (n2-1) cam 
-cantTesorosEntre 0  n2 (Cofre os cam) = cantidadDeTesoros os + cantTesorosEntre 0 (n2-1) cam
-cantTesorosEntre n1 n2 (Nada cam)     = cantTesorosEntre (n1-1) (n2-1) cam
-cantTesorosEntre n1 n2 (Cofre _ cam)  = cantTesorosEntre (n1-1) (n2-1) cam
+cantTesorosEntre n1 n2 (Nada cam)     = if n1 == 0
+                                           then cantTesorosEntre n1 (n2-1) cam
+                                           else cantTesorosEntre (n1-1) (n2-1) cam
+cantTesorosEntre n1 n2 (Cofre os cam) = if n1 == 0
+                                           then cantidadDeTesoros os + cantTesorosEntre n1 (n2-1) cam
+                                           else cantTesorosEntre (n1-1) (n2-1) cam
 
 
 -- ####################################################################################################################### --
