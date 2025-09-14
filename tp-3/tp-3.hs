@@ -129,11 +129,9 @@ cantTesorosEntre :: Int -> Int -> Camino -> Int
 --            indica la cantidad de tesoros que hay entre hacer 3 pasos y hacer 5. Están incluidos tanto 3 como 5 en el resultado.
 -- PRECONDICIÓN: Siendo n el primer número dado, y m el segundo: n <= m.
 cantTesorosEntre _  _  Fin            = 0
-cantTesorosEntre 0  0  _              = 0
-cantTesorosEntre n1 n2 (Nada cam)     = if n1 == 0
-                                           then cantTesorosEntre n1 (n2-1) cam
-                                           else cantTesorosEntre (n1-1) (n2-1) cam
-cantTesorosEntre n1 n2 (Cofre os cam) = if n1 == 0
+cantTesorosEntre _  0  _              = 0
+cantTesorosEntre n1 n2 (Nada cam)     = cantTesorosEntre (n1-1) (n2-1) cam
+cantTesorosEntre n1 n2 (Cofre os cam) = if n1 <= 0 && n2 > 0
                                            then cantidadDeTesoros os + cantTesorosEntre n1 (n2-1) cam
                                            else cantTesorosEntre (n1-1) (n2-1) cam
 
