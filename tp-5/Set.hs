@@ -37,7 +37,7 @@ addS :: Eq a => a -> Set a -> Set a
 -- PROPÓSITO: Dados un elemento y un conjunto, agrega el elemento al conjunto.
 -- COSTO: O(N).
     -- Siendo N la cantidad de elementos en xs, por cada elemento se realiza la operacion "==" de costo constante. Esto
-    -- porque se utiliza la función "elem" que realiza esto y es de costo lineal en xs. Por eso resulta ser de costo lineal.
+    -- porque se utiliza la función "elem" que realiza esto y es de costo lineal en xs. Por eso resulta ser de costo lineal en el peor caso.
 addS x (S xs n) = if elem x xs
                      then S xs n
                      else S (x:xs) (n+1) 
@@ -47,7 +47,7 @@ belongs :: Eq a => a -> Set a -> Bool
 -- PROPÓSITO: Dados un elemento y un conjunto indica si el elemento pertenece al conjunto.
 -- COSTO: O(N).
     -- Siendo N la cantidad de elementos en xs, por cada elemento se realiza la operación "==" de costo constante. Es por
-    -- eso que resulta ser de costo lineal.
+    -- eso que resulta ser de costo lineal en el peor caso.
 belongs x (S xs _) = elem x xs
 
 
@@ -70,7 +70,7 @@ unionS :: Eq a => Set a -> Set a -> Set a
 -- PROPÓSITO: Dados dos conjuntos devuelve un conjunto con todos los elementos de ambos conjuntos.
 -- COSTO: O(N^2).
     -- Siendo N la cantidad de elementos en xs2, se utiliza la función "unirS" de costo cuadrático en xs1 y xs2. Es por eso
-    -- que resulta que el costo total de la función sea cuadrático.
+    -- que resulta que el costo total de la función en el peor caso sea cuadrático.
 unionS (S xs1 n1) (S xs2 _) = let (xs, n) = unirS xs1 xs2 n1
                                in S xs n
 
@@ -89,7 +89,7 @@ quitarS :: Eq a => a -> [a] -> Int -> ([a], Int)
 --            se encuentra en ella, además de actualizar el número restándole uno, ya que representa el contador de elementos de la lista.
 -- COSTO: O(N).
     -- Siendo N la cantidad de elementos en xs, por cada elemento se realiza la operación "==" de costo constante. Es por
-    -- eso que resulta de costo lineal.
+    -- eso que resulta de costo lineal en el peor caso.
 quitarS x' []     n = ([], n)
 quitarS x' (x:xs) n = if x == x'
                          then (xs, n-1)
@@ -102,7 +102,7 @@ unirS :: Eq a => [a] -> [a] -> Int -> ([a], Int)
 --            listas dadas y el número la cantidad de elementos en la lista resultante.
 -- COSTO: O(N^2).
     -- Siendo N la cantidad de elementos en ys, por cada elemento se realiza la operación "elem" de costo lineal en ys.
-    -- Resultando que el costo total de la función es cuadrático.
+    -- Resultando que el costo total de la función en el peor caso es cuadrático.
 unirS xs []     n = (xs, n)
 unirS xs (y:ys) n = if elem y xs
                        then unirS xs ys n
