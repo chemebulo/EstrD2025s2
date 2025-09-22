@@ -1,4 +1,5 @@
 import Set
+import Queue
 
 -- ########################################################################################################### --
 
@@ -154,7 +155,7 @@ losQuePertenecen :: Eq a => [a] -> Set a -> [a]
 -- PROPÓSITO: Dados una lista y un conjunto, devuelve una lista con todos los elementos que pertenecen al conjunto.
 -- COSTO: O(N^2). Puede ser más eficiente con otra implementación de Set.
     -- Siendo N la cantidad de elementos en xs, por cada elemento se realiza la operación "belongs" de costo lineal. Es por
-    -- eso que el costo total de la función resulta ser de costo cuadrático.
+    -- eso que el costo total de la función resulta ser en el peor caso de costo cuadrático.
 losQuePertenecen []     s = []
 losQuePertenecen (x:xs) s = if belongs x s
                                then x : losQuePertenecen xs s
@@ -165,14 +166,14 @@ sinRepetidos :: Eq a => [a] -> [a]
 -- PROPÓSITO: Quita todos los elementos repetidos de la lista dada utilizando un conjunto como estructura auxiliar.
 -- COSTO: O(N^2).
     -- Siendo N la cantidad de elementos, en xs se utiliza la función "sinRepetidosS" de costo cuadrático, y la operación
-    -- "setToList" de costo constante. Es por eso que el costo total de la función es cuadrático.
+    -- "setToList" de costo constante. Es por eso que el costo total de la función en el peor caso es cuadrático.
 sinRepetidos xs = setToList (sinRepetidosS xs)
 
 sinRepetidosS :: Eq a => [a] -> Set a
 -- PROPÓSITO: Describe un Set con todos los elementos de la lista dada. 
 -- COSTO: O(N^2).
     -- Siendo N la cantidad de elementos en xs, por cada elemento se utiliza la operación "addS" de costo lineal. Es por eso 
-    -- que el costo total de la función es cuadrático.
+    -- que el costo total de la función en el peor caso es cuadrático.
 sinRepetidosS []     = emptyS
 sinRepetidosS (x:xs) = addS x (sinRepetidosS xs)
 
@@ -181,12 +182,56 @@ unirTodos :: Eq a => Tree (Set a) -> Set a
 -- PROPÓSITO: Dado un árbol de conjuntos devuelve un conjunto con la unión de todos los conjuntos del árbol.
 -- COSTO: O(N^2).
     -- Siendo N la cantidad de elementos, se realizan las operaciones "unionS" de costo cuadrático. Esto resulta que el costo 
-    -- total de la función es (N^2 + N^2), aunque esto es simplificado como cuadrático (N^2).
+    -- total de la función en el peor caso es (N^2 + N^2), aunque esto es simplificado como cuadrático (N^2).
 unirTodos EmptyT          = emptyS
 unirTodos (NodeT s ti td) = unionS s (unionS (unirTodos ti) (unirTodos td))
 
 
--- EJERCICIO 3: Queue (Cola).
+-- EJERCICIO 3: Queue (Cola) - Costos analizados con la primera versión.
+
+{-      COSTO OPERACIONAL DE CADA FUNCIÓN:
+
+---------------------------------------------------
+|         QUEUE_V1        |        QUEUE_V2       |
+|-------------------------|-----------------------|
+|   emptyQ          O(1)  | emptyQ          O(1)  |
+|   isEmptyQ        O(1)  | isEmptyQ        O(1)  |
+|   enqueue         O(N)  | enqueue         O(1)  |
+|   firstQ          O(1)  | firstQ          O(1)  |
+|   dequeue         O(1)  | dequeue         O(N)  |
+---------------------------------------------------
+
+-}
+
+lengthQ :: Queue a -> Int
+-- PROPÓSITO: Cuenta la cantidad de elementos de la cola.
+-- COSTO: O(N).
+    -- Siendo N la cantidad de elementos en la Queue, por cada elemento se realizan operaciones de costo constante como "isEmptyQ",
+    -- "dequeue". Esto resulta en que el costo total de la función en el peor caso es lineal.
+lengthQ q = if not (isEmptyQ q)
+               then 1 + lengthQ (dequeue q)
+               else 0
+
+
+queueToList :: Queue a -> [a]
+-- PROPÓSITO: Dada una cola devuelve la lista con los mismos elementos, donde el orden de la lista es el de la cola.
+-- NOTA: Chequear que los elementos queden en el orden correcto.
+-- COSTO: O(N).
+    -- Siendo N la cantidad de elementos en la Queue, por cada elemento se realiza la operación "isEmptyQ", "firstQ" y "dequeue",
+    -- todas de costo constante. Es por eso que el costo total de la función en el peor caso es lineal. 
+queueToList q = if not (isEmptyQ q)
+                   then (firstQ q) : (queueToList (dequeue q))
+                   else []
+
+
+unionQ :: Queue a -> Queue a -> Queue a
+-- PROPÓSITO: Inserta todos los elementos de la segunda cola en la primera.
+-- COSTO: O(N^2).
+    -- Siendo N la cantidad de elementos en la Queue, por cada elemento se realizan las operaciones "isEmptyQ", "firstQ" y "dequeue",
+    -- todas de costo constante, además de "enqueue" de costo lineal. Es por eso que el costo total de la función en el peor caso es cuadrático.
+unionQ q1 q2 = if not (isEmptyQ q2)
+                  then enqueue (firstQ q2) (unionQ q1 (dequeue q2))
+                  else q1
 
 
 -- EJERCICIO 4: Stack (Pila).
