@@ -1,4 +1,3 @@
-import Stack
 import Set
 
 -- ########################################################################################################### --
@@ -130,3 +129,67 @@ ordenar xs = let m = minimo xs
 
 
 -- EJERCICIO 2: Set (Conjunto).
+
+data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
+    deriving Show
+
+
+{-      COSTO OPERACIONAL DE CADA FUNCIÓN:
+
+---------------------------------------------------
+|         SET_V1          |         SET_V2        |
+|-------------------------|-----------------------|
+|   emptyS        O(1)    | emptyS        O(1)    |
+|   addS          O(N)    | addS          O(1)    |
+|   belongs       O(N)    | belongs       O(N)    |
+|   sizeS         O(1)    | sizeS         O(N^2)  |
+|   removeS       O(N)    | removeS       O(N)    |
+|   unionS        O(N^2)  | unionS        O(N)    |
+|   setToList     O(1)    | setToList     O(N^2)  |
+---------------------------------------------------
+
+-}
+
+losQuePertenecen :: Eq a => [a] -> Set a -> [a]
+-- PROPÓSITO: Dados una lista y un conjunto, devuelve una lista con todos los elementos que pertenecen al conjunto.
+-- COSTO: O(N^2). Puede ser más eficiente con otra implementación de Set.
+    -- Siendo N la cantidad de elementos en xs, por cada elemento se realiza la operación "belongs" de costo lineal. Es por
+    -- eso que el costo total de la función resulta ser de costo cuadrático.
+losQuePertenecen []     s = []
+losQuePertenecen (x:xs) s = if belongs x s
+                               then x : losQuePertenecen xs s
+                               else losQuePertenecen xs s
+
+
+sinRepetidos :: Eq a => [a] -> [a]
+-- PROPÓSITO: Quita todos los elementos repetidos de la lista dada utilizando un conjunto como estructura auxiliar.
+-- COSTO: O(N^2).
+    -- Siendo N la cantidad de elementos, en xs se utiliza la función "sinRepetidosS" de costo cuadrático, y la operación
+    -- "setToList" de costo constante. Es por eso que el costo total de la función es cuadrático.
+sinRepetidos xs = setToList (sinRepetidosS xs)
+
+sinRepetidosS :: Eq a => [a] -> Set a
+-- PROPÓSITO: Describe un Set con todos los elementos de la lista dada. 
+-- COSTO: O(N^2).
+    -- Siendo N la cantidad de elementos en xs, por cada elemento se utiliza la operación "addS" de costo lineal. Es por eso 
+    -- que el costo total de la función es cuadrático.
+sinRepetidosS []     = emptyS
+sinRepetidosS (x:xs) = addS x (sinRepetidosS xs)
+
+
+unirTodos :: Eq a => Tree (Set a) -> Set a
+-- PROPÓSITO: Dado un árbol de conjuntos devuelve un conjunto con la unión de todos los conjuntos del árbol.
+-- COSTO: O(N^2).
+    -- Siendo N la cantidad de elementos, se realizan las operaciones "unionS" de costo cuadrático. Esto resulta que el costo 
+    -- total de la función es (N^2 + N^2), aunque esto es simplificado como cuadrático (N^2).
+unirTodos EmptyT          = emptyS
+unirTodos (NodeT s ti td) = unionS s (unionS (unirTodos ti) (unirTodos td))
+
+
+-- EJERCICIO 3: Queue (Cola).
+
+
+-- EJERCICIO 4: Stack (Pila).
+
+
+-- EJERCICIO 5: Queue con dos listas.
