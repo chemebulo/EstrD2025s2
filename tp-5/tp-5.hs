@@ -1,5 +1,5 @@
 import Set
-import Queue
+import QueueV3
 import Stack
 
 -- ########################################################################################################### --
@@ -290,11 +290,11 @@ insertarEnPos n x st = push (top st) (insertarEnPos (n-1) x (pop st))
 ---------------------------------------------------------------------------
 |         QUEUE_V1        |        QUEUE_V2       |        QUEUE_V3       |         
 |-------------------------|-----------------------|-----------------------|
-|   emptyQ          O(1)  | emptyQ          O(1)  | emptyQ          O()   |
-|   isEmptyQ        O(1)  | isEmptyQ        O(1)  | isEmptyQ        O()   |
-|   enqueue         O(N)  | enqueue         O(1)  | enqueue         O()   |
-|   firstQ          O(1)  | firstQ          O(1)  | firstQ          O()   |
-|   dequeue         O(1)  | dequeue         O(N)  | dequeue         O()   |
+|   emptyQ          O(1)  | emptyQ          O(1)  | emptyQ          O(1)  |
+|   isEmptyQ        O(1)  | isEmptyQ        O(1)  | isEmptyQ        O(1)  |
+|   enqueue         O(N)  | enqueue         O(1)  | enqueue         O(1)  |
+|   firstQ          O(1)  | firstQ          O(1)  | firstQ          O(1)  |
+|   dequeue         O(1)  | dequeue         O(N)  | dequeue         O(1)  |
 ---------------------------------------------------------------------------
 
 -}
