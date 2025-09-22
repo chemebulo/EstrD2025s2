@@ -1,5 +1,6 @@
 import Set
 import Queue
+import Stack
 
 -- ########################################################################################################### --
 
@@ -236,5 +237,64 @@ unionQ q1 q2 = if not (isEmptyQ q2)
 
 -- EJERCICIO 4: Stack (Pila).
 
+{-      COSTO OPERACIONAL DE CADA FUNCIÓN:
+
+---------------------------
+|          STACK          |
+|-------------------------|
+|  emptyST          O(1)  |
+|  isEmptyST        O(1)  |
+|  push             O(N)  |
+|  top              O(1)  |
+|  pop              O(1)  |
+|  lenST            O(1)  |
+---------------------------
+
+-}
+
+apilar :: [a] -> Stack a
+-- PROPÓSITO: Dada una lista devuelve una pila sin alterar el orden de los elementos.
+-- COSTO: O(N).
+    -- Siendo N la cantidad de elementos en el Stack, por cada elemento realiza la operación "push" de costo constante. Es por
+    -- eso que el costo total de la función en el peor caso es lineal.
+apilar []     = emptyST
+apilar (x:xs) = push x (apilar xs)
+
+
+desapilar :: Stack a -> [a]
+-- PROPÓSITO: Dada una pila devuelve una lista sin alterar el orden de los elementos.
+-- COSTO: O(N).
+    -- Siendo N la cantidad de elementos en el Stack, por cada elemento realizan las operaciones "isEmptyST", "top" y "pop" de
+    -- costo constante. Es por eso que el costo total de la función en el peor caso es lineal.
+desapilar st = if not (isEmptyST st)
+                  then top st : desapilar (pop st)
+                  else []
+
+
+insertarEnPos :: Int -> a -> Stack a -> Stack a
+-- PROPÓSITO: Dada una posicion válida en la stack y un elemento, ubica dicho elemento en dicha posición (se desapilan elementos
+--            hasta dicha posición y se inserta en ese lugar).
+-- PRECONDICIÓN: La posicion dada existe dentro del stack dado.
+-- COSTO: O(N).
+    -- Siendo N la longitud del número n, por cada número se realizan las operaciones "push", "top" y "pop" de costo constante.
+    -- Es por eso que el costo total de la función en el peor caso es lineal. 
+insertarEnPos 0 x st = push x st
+insertarEnPos n x st = push (top st) (insertarEnPos (n-1) x (pop st))
+
 
 -- EJERCICIO 5: Queue con dos listas.
+
+-- La ventaja es que es eficiente tanto en la operación "enqueue" como "enqueue". Queda evidenciado esto mismo en el gráfico.
+
+{-
+---------------------------------------------------------------------------
+|         QUEUE_V1        |        QUEUE_V2       |        QUEUE_V3       |         
+|-------------------------|-----------------------|-----------------------|
+|   emptyQ          O(1)  | emptyQ          O(1)  | emptyQ          O()   |
+|   isEmptyQ        O(1)  | isEmptyQ        O(1)  | isEmptyQ        O()   |
+|   enqueue         O(N)  | enqueue         O(1)  | enqueue         O()   |
+|   firstQ          O(1)  | firstQ          O(1)  | firstQ          O()   |
+|   dequeue         O(1)  | dequeue         O(N)  | dequeue         O()   |
+---------------------------------------------------------------------------
+
+-}
