@@ -58,7 +58,7 @@ deleteMinPQ :: Ord a => PriorityQueue a -> PriorityQueue a
 -- PRECONDICIÓN: Parcial en caso de Priority Queue vacía.
 -- COSTO: O(1).
     -- Siendo de costo constante ya que solamente se utiliza la operación "tail".
-deleteMinPQ (PQ xs) = tail xs
+deleteMinPQ (PQ xs) = PQ (tail xs)
 
 
 -- ##################################################### AUXILIARES #####################################################
