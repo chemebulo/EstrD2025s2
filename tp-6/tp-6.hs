@@ -50,10 +50,10 @@ desarmarPQ pq = if not (isEmptyPQ pq)
     |       MAP_V1     |        MAP_V2       |      MAP_V3       |
     |------------------|---------------------|-------------------|
     |  emptyM    O(1)  |   emptyM    O(1)    |   emptyM    O(1)  |
-    |  assocM    O(n)  |   assocM    O(1)    |   assocM    O(n)  |
-    |  lookupM   O(n)  |   lookupM   O(n)    |   lookupM   O(n)  |
-    |  deleteM   O(n)  |   deleteM   O(n)    |   deleteM   O(n)  |
-    |  keys      O(n)  |   keys      O(n^2)  |   keys      O(1)  |
+    |  assocM    O(N)  |   assocM    O(1)    |   assocM    O(N)  |
+    |  lookupM   O(N)  |   lookupM   O(N)    |   lookupM   O(N)  |
+    |  deleteM   O(N)  |   deleteM   O(N)    |   deleteM   O(N)  |
+    |  keys      O(N)  |   keys      O(N^2)  |   keys      O(1)  |
     --------------------------------------------------------------
 -}
 
