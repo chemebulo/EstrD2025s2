@@ -182,7 +182,156 @@ altura EmptyT          = 0
 altura (NodeT x ti td) = 1 + max (altura ti) (altura td)
 
 
--- EJERCICIO 3: Reimplementación de Map con costos logarítmicos.
+-- EJERCICIO 3: Recálculo de costos con Map de costos logarítmicos.
+
+{-
+    ------------------------
+    |        MAP_V4        |
+    |----------------------|
+    |  emptyM    O(1)      |
+    |  assocM    O(log K)  |
+    |  lookupM   O(log K)  |
+    |  deleteM   O(log K)  |
+    |  keys      O(K)      |
+    ------------------------
+-}
+
+valuesM :: Eq k => Map k v -> [Maybe v]
+-- PROPÓSITO: Obtiene los valores asociados a cada clave del Map.
+-- COSTO: O(K log K).
+    -- Siendo K la cantidad de claves del Map, por cada clave se realiza la operación "keys" de costo lineal, y se utiliza la 
+    -- función "valuesM'" de costo "K log K". Es por eso que el costo total de la función en el caso promedio es "K log K + K",
+    -- pero se simplifica como K log K.
+valuesM m = valuesM' (keys m) m
+
+valuesM' :: Eq k => [k] -> Map k v -> [Maybe v]
+-- PROPÓSITO: Describe una lista de valores de las claves dadas.
+-- COSTO: O(K log K).
+    -- Siendo K la cantidad de claves del Map, por cada clave se utiliza la operación "lookupM" de costo "log K". Es por eso que
+    -- el costo total de la función en el caso promedio es "K log K".
+valuesM' []     m = []
+valuesM' (k:ks) m = lookupM k m : valuesM' ks m
+
+
+todasAsociadas :: Eq k => [k] -> Map k v -> Bool
+-- PROPÓSITO: Indica si en el Map se encuentran todas las claves dadas.
+-- COSTO: O(K log K).
+    -- Siendo K la cantidad de claves del Map, por cada clave se utiliza la función "existeClave" de costo "log K". Es por eso que el
+    -- costo total de la función en el caso promedio es "K log K".
+todasAsociadas []     m = False
+todasAsociadas (k:ks) m = existeClave k m && todasAsociadas ks m
+
+existeClave :: Eq k => k -> Map k v -> Bool
+-- PROPÓSITO: Indica si la clave dada se encuentra en el Map dado.
+-- COSTO: O(log K).
+    -- Siendo K la cantidad de claves del Map, se utiliza la operación "lookupM" de costo "log K". Es por eso que el costo total
+    -- de la función en el caso promedio es "log K".
+existeClave k m = case lookupM k m of
+                    Just _ -> True
+                    _      -> False
+
+
+listToMap :: Eq k => [(k, v)] -> Map k v
+-- PROPÓSITO: Convierte una lista de pares clave valor en un Map.
+-- COSTO: O(K log K).
+    -- Siendo K la cantidad de claves del Map, por cada par de la lista dada se realiza la operación "assocM" de costo "log K".
+    -- Es por eso que el costo total de la función en el caso promedio es "K log K".
+listToMap []           = emptyM
+listToMap ((k, v):kvs) = assocM k v (listToMap kvs)
+
+
+mapToList :: Eq k => Map k v -> [(k, v)]
+-- PROPÓSITO: Convierte un Map en una lista de pares clave valor.
+-- COSTO: O(K log K).
+    -- Siendo K la cantidad de claves del Map, por cada clave se realiza la operación "keys" de costo lineal, y se utiliza la 
+    -- función "mapToList'" de costo "K log K". Es por eso que el costo total de la función en el caso promedio es "K log K + K",
+    -- pero se simplifica como K log K.
+mapToList m = mapToList' (keys m) m
+
+mapToList' :: Eq k => [k] -> Map k v -> [(k, v)]
+-- PROPÓSITO: Convierte un Map en una lista de pares clave valor en base a una lista de claves perteneciente al Map dado.
+-- COSTO: O(K log K).
+    -- Siendo K la cantidad de claves del Map, por cada clave de la lista dada se utiliza la operación "lookupM" de costo "log K". 
+    -- Es por eso que el costo total de la función en el caso promedio es "K log K".
+mapToList' []     m = []
+mapToList' (k:ks) m = let v = fromJust (lookupM k m)
+                       in (k, v) : mapToList' ks m
+
+fromJust :: Maybe a -> a
+-- PROPÓSITO: Devuelve el valor del dato dado.
+-- PRECONDICIÓN: El valor debe existir.
+-- COSTO: O(1).
+    -- Siendo de costo constante ya que solamente se realiza pattern matching y se devuelve un valor que se accedió.
+fromJust (Just x) = x
+fromJust _        = error "Se incumplio la precondicion."
+
+
+agruparEq :: Eq k => [(k, v)] -> Map k [v]
+-- PROPÓSITO: Dada una lista de pares clave valor, agrupa los valores de los pares que compartan la misma clave.
+-- COSTO: O(K log K).
+    -- Siendo K la cantidad de claves del Map, por cada par de la lista dada se realiza la operación "assocM" y "lookupM" ambas de
+    -- costo "log K". Es por eso que el costo total de la función en el caso promedio es "K log K".
+agruparEq []           = emptyM
+agruparEq ((k, v):kvs) = case lookupM k (agruparEq kvs) of
+                           Just vs  -> assocM k (v:vs) (agruparEq kvs)  
+                           _        -> assocM k [v] (agruparEq kvs)
+
+
+incrementar :: Eq k => [k] -> Map k Int -> Map k Int
+-- PROPÓSITO: Dada una lista de claves de tipo k y un Map que va de k a Int, le suma uno a cada número asociado con
+--            dichas claves.
+-- COSTO: O(K log K).
+    -- Siendo K la cantidad de claves del Map, por cada clave de la lista dada se utiliza la operación "lookupM" y/o "assocM" ambas
+    -- de costo "log K". Es por eso que el costo total de la función en el caso promedio es "K log K".
+incrementar []     m = emptyM
+incrementar (k:ks) m = case lookupM k m of
+                         Just v -> assocM k (v+1) (incrementar ks m)  
+                         _      -> incrementar ks m
+
+
+mergeMaps :: Eq k => Map k v -> Map k v -> Map k v
+-- PROPÓSITO: Dado dos Maps se agregan las claves y valores del primer Map en el segundo. Si una clave del primero existe
+--            en el segundo, es reemplazada por la del primero.
+-- COSTO: O(K log K).
+    -- Siendo K la cantidad de claves del primer Map, se utiliza la realiza "keys" de costo lineal, y se utiliza la función
+    -- "mergeMaps'" de costo "K log K". Es por eso que el costo total de la función en el caso promedio es "K log K".
+mergeMaps m1 m2 = mergeMaps' (keys m1) m1 m2
+
+mergeMaps' :: Eq k => [k] -> Map k v -> Map k v -> Map k v
+-- COSTO: O(K log K).
+    -- Siendo K la cantidad de claves del primer Map, por cada clave de la lista dada se realizan las operaciones "lookupM" y
+    -- "assocM" de costo "log K". Es por eso que el costo total de la función en el caso promedio es "K log K".
+mergeMaps' []     _  m2 = m2
+mergeMaps' (k:ks) m1 m2 = let v = fromJust (lookupM k m1)
+                           in assocM k v (mergeMaps' ks m1 m2) 
+
+
+indexar :: [a] -> Map Int a
+-- PROPÓSITO: Dada una lista de elementos construye un Map que relaciona cada elemento con su posición en la lista.
+-- COSTO: O(K log K).
+    -- Siendo K la cantidad de claves del Map, con la lista dada se utiliza la función "indexar'" de costo "K log K".
+    -- Es por eso que el costo total de la función en el caso promedio es "K log K".
+indexar xs = indexar' 0 xs
+
+indexar' :: Int -> [a] -> Map Int a
+-- PROPÓSITO: Dada una lista de elementos construye un Map que relaciona cada elemento con su posición en la lista.
+-- COSTO: O(K log K).
+    -- Siendo K la cantidad de claves del Map, por cada par de la lista dada se realiza la operación "assocM" de costo "log K".
+    -- Es por eso que el costo total de la función en el caso promedio es "K log K".
+indexar' n []     = emptyM
+indexar' n (x:xs) = assocM n x (indexar' (n+1) xs)
+
+
+ocurrencias :: String -> Map Char Int
+-- PROPÓSITO: Dado un string, devuelve un Map donde las claves son los caracteres que aparecen en el string, y los valores
+--            la cantidad de veces que aparecen en el mismo.
+-- COSTO: O(K log K).
+    -- Siendo K la cantidad de claves del , por cada caracter de la lista dada se realizan las operaciones "lookupM" y "assocM"
+    -- de costo "log K". Es por eso que el costo total de la función en el caso promedio es "K log K".
+ocurrencias []     = emptyM
+ocurrencias (c:cs) = case lookupM c (ocurrencias cs) of
+                         Just v -> assocM c (v+1) (ocurrencias cs)  
+                         _      -> assocM c 1 (ocurrencias cs)
 
 
 -- EJERCICIO 4: Empresa.
