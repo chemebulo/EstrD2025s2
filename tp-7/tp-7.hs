@@ -1,4 +1,6 @@
 import PriorityQueue
+import Map
+import Empresa
 
 -- EJERCICIO 1: Costo HeapSort con implementación de Heap en la PQ.
 
@@ -335,3 +337,85 @@ ocurrencias (c:cs) = case lookupM c (ocurrencias cs) of
 
 
 -- EJERCICIO 4: Empresa.
+
+{-
+    ---------------------------------------------------
+    |                     EMPRESA                     |
+    |-------------------------------------------------|
+    |  consEmpresa         O(1)                       |
+    |  buscarPorCUIL       O(log C)                   |
+    |  empleadosDelSector  O(log S + E)               |
+    |  todosLosCUIL        O(C)                       |
+    |  todosLosSectores    O(S)                       |
+    |  agregarSector       O(log S)                   |
+    |  agregarEmpleado     O(S log S + log E + log C) |
+    |  agregarASector      O(log S + log C + log E)   |
+    |  borrarEmpleado      O(S log S + log C + log E) |
+    ---------------------------------------------------
+-}
+
+-- EJERCICIO 5: Funciones de usuario Empresa.
+
+comenzarCon :: [SectorId] -> [CUIL] -> Empresa
+-- PROPÓSITO: Construye una empresa con la información de empleados dada. Los sectores no tienen empleados.
+-- COSTO: O(C * (S log S + log C + log E)).
+    -- Siendo C la cantidad de CUIL, S la cantidad de Sectores y E la cantidad de Empleados; se utiliza la función "empresaConCUILs" 
+    -- de costo "C * (S log S + log C + log E)", y "agregarSectores" de costo "S log S". Es por eso que el costo total de la
+    -- función en el caso promedio es "C * (S log S + log C + log E)".
+comenzarCon ss cc = agregarSectores ss (empresaConCUILs cc)
+
+empresaConCUILs :: [CUIL] -> Empresa
+-- PROPÓSITO: Devuelve una empresa con los CUIL dados.
+-- COSTO: O(C * (S log S + log C + log E)).
+    -- Siendo C la cantidad de CUIL, S la cantidad de Sectores y E la cantidad de Empleados; por cada CUIL se utiliza la 
+    -- operación "agregarEmpleado" de costo "S log S + log C + log E". Es por eso que el costo total de la función en el 
+    -- caso promedio es "C * (S log S + log C + log E)".
+empresaConCUILs []     = consEmpresa
+empresaConCUILs (c:cs) = agregarEmpleado [] c (empresaConCUILs cs)
+
+agregarSectores :: [SectorId] -> Empresa -> Empresa
+-- PROPÓSITO: Agrega los SectorId dados a la empresa dada.
+-- COSTO: O(S log S).
+    -- Siendo S la cantidad de Sectores, por cada sector se utiliza la operación "agregarSector" de costo "log S". Es por eso
+    -- que el costo total de la función en el caso promedio es "S log S".
+agregarSectores []     e = e
+agregarSectores (s:ss) e = agregarSector s (agregarSectores ss e)
+
+
+recorteDePersonal :: Empresa -> Empresa
+-- PROPÓSITO: Dada una empresa elimina a la mitad de sus empleados (sin importar a quiénes).
+-- COSTO: O(C * (S log S + log C + log E)).
+    -- Siendo C la cantidad de CUIL, S la cantidad de Sectores y E la cantidad de Empleados; se utiliza la operación "todosLosCUIL"
+    -- de costo "E", y la función "recorteDePersonal'" de costo "C * (S log S + log C + log E)". Es por eso que el costo total
+    -- de la función en el caso promedio es "C * (S log S + log C + log E)".
+recorteDePersonal e = recorteDePersonal' (todosLosCUIL e) e
+
+recorteDePersonal' :: [CUIL] -> Empresa -> Empresa
+-- PROPÓSITO: Dada una empresa y su lista de CUILs, elimina a la mitad de sus empleados (sin importar a quiénes).
+-- COSTO: O(C * (S log S + log C + log E)).
+    -- Siendo C la cantidad de CUIL, S la cantidad de Sectores y E la cantidad de Empleados; por cada CUIL se utiliza la
+    -- operación "borrarEmpleado" de costo "S log S + log C + log E". Es por eso que el costo total de la función en el
+    -- caso promedio es "C * (S log S + log C + log E)".
+recorteDePersonal' []        e = e
+recorteDePersonal' (c:[])    e = e
+recorteDePersonal' (c:c':cs) e = let e' = recorteDePersonal' cs e
+                                  in borrarEmpleado c' e'
+
+
+convertirEnComodin :: CUIL -> Empresa -> Empresa
+-- PROPÓSITO: Dado un CUIL de empleado le asigna todos los sectores de la empresa.
+-- COSTO: O(S + log C + log E).
+    -- Siendo C la cantidad de CUIL, S la cantidad de Sectores y E la cantidad de Empleados; se utiliza la operación "todosLos
+    -- sectores" de costo lineal en S, y "agregarEmpleado" de costo "log S + log C + log E". Es por eso que el costo total
+    -- de la función en el caso promedio es "S + log C + log E".
+convertirEnComodin c e = agregarEmpleado (todosLosSectores e) c e
+
+
+esComodin :: CUIL -> Empresa -> Bool
+-- PROPÓSITO: Dado un CUIL de empleado indica si el empleado está en todos los sectores.
+-- PRECONDICIÓN: El CUIL es de un empleado de la empresa.
+-- COSTO: O(S + log C).
+    -- Siendo S la cantidad de Sectores y C la cantidad de CUILs, se utilizan las operaciones "sectores" y "todosLosSectores" 
+    -- de costo lineal en S, y "buscarPorCUIL" de costo "log C". Es por eso que el costo total de la función en el caso promedio
+    -- es "S + S + log C", pero se simplifica en "S + log C".
+esComodin c e = (sectores (buscarPorCUIL c e)) == (todosLosSectores e)
