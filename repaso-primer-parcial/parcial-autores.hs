@@ -158,8 +158,8 @@ data Organizador = MKO (Map Checksum (Set Persona)) (Map Persona (Set Checksum))
     * Siendo MK0 mcsp mpsc mc:
         * Cada Checksum de cada persona en MPSC debe existir en MCSP como clave, y tener como valor a esa persona.
         * Cada Persona de cada Checksum en MCSP debe existir en MPSC como clave, y tener como valor a ese Checksum.
-        * Si MCSP se encuentra vacío, MC es Nothing. En caso contrario MC es el Checksum con más autores de MCSP (el Checksum con la mayor
-          longitud del Set de Persona).
+        * Si MCSP se encuentra vacío, MC es Nothing. En caso contrario MC es Just el Checksum con más autores de MCSP (el Checksum con 
+          la mayor longitud del Set de Persona).
 -}
 
 ----------------------------------------------------------------------------------------------------------------------------------------
