@@ -3,8 +3,10 @@
 using namespace std;
 
 ArrayList newArrayList(){
-    // PROPÓSITO: Crea una lista con 0 elementos.
-    // NOTA: Empezar el ArrayList con capacidad 16.
+// PROPÓSITO: Crea una lista con 0 elementos.
+// NOTA: Empezar el ArrayList con capacidad 16.
+// COSTO OPERACIONAL: O(1).
+// COSTO MEMORIA: O(1).
     ArrayList al = new ArrayListSt();
     al->cantidad = 0;
     al->capacidad = 16;
@@ -20,6 +22,8 @@ void validarCapacidad(int n){
 
 ArrayList newArrayListWith(int capacidad){
 // PROPÓSITO: Crea una lista con 0 elementos y una capacidad dada por parámetro.
+// COSTO OPERACIONAL: O(1).
+// COSTO MEMORIA: O(1).
     validarCapacidad(capacidad);
     ArrayList al = new ArrayListSt();
     al->cantidad = 0;
@@ -30,6 +34,8 @@ ArrayList newArrayListWith(int capacidad){
 
 int lengthAL(ArrayList xs){
 // PROPÓSITO: Devuelve la cantidad de elementos existentes.
+// COSTO OPERACIONAL: O(1).
+// COSTO MEMORIA: O(1).
     return xs->cantidad;
 }
 
@@ -42,6 +48,8 @@ void validarAccesoAIndice(int i, ArrayList xs){
 int get(int i, ArrayList xs){
 // PROPÓSITO: Devuelve el iésimo elemento de la lista.
 // PRECONDICIÓN: El ArrayList dado debe tener al menos i elementos.
+// COSTO OPERACIONAL: O(1).
+// COSTO MEMORIA: O(1).
     validarAccesoAIndice(i, xs);
     return xs->elementos[i];
 }
@@ -49,6 +57,8 @@ int get(int i, ArrayList xs){
 void set(int i, int x, ArrayList xs){
 // PROPÓSITO: Reemplaza el iésimo elemento por otro dado.
 // PRECONDICIÓN: El ArrayList dado debe tener al menos i elementos.
+// COSTO OPERACIONAL: O(1).
+// COSTO MEMORIA: O(1).
     validarAccesoAIndice(i, xs);
     xs->elementos[i] = x;
 }
@@ -56,6 +66,8 @@ void set(int i, int x, ArrayList xs){
 void resize(int capacidad, ArrayList xs){
 // PROPÓSITO: Decrementa o aumenta la capacidad del array.
 // NOTA: En caso de decrementarla, se pierden los elementos del final de la lista.
+// COSTO OPERACIONAL: O(N).
+// COSTO MEMORIA: O(1).
     int* elems = new int[capacidad];
 
     int cantidad = (capacidad < xs->cantidad) ? capacidad : xs->cantidad;
@@ -72,6 +84,8 @@ void resize(int capacidad, ArrayList xs){
 
 void add(int x, ArrayList xs){
 // PROPÓSITO: Agrega un elemento al final de la lista.
+// COSTO OPERACIONAL: O(1) Amortizado.
+// COSTO MEMORIA: O(1).
     if(xs->cantidad == xs->capacidad){
         int* elems = new int[xs->capacidad*2];
 
@@ -88,12 +102,17 @@ void add(int x, ArrayList xs){
     xs->cantidad++;
 }
 
+void validarRemove(ArrayList xs){
+    if(xs->cantidad == 0){
+        throw new runtime_error("El ArrayList no puede estar vacío");
+    }
+}
+
 void remove(ArrayList xs){
 // PROPÓSITO: Borra el último elemento de la lista.
 // PRECONDICIÓN: El ArrayList no debe estar vacío.
-    if(xs->cantidad == 0){
-        throw new runtime_error("El ArrayList no puede estar vacío");
-    } else {
-        xs->cantidad--;
-    }
+// COSTO OPERACIONAL: O(1).
+// COSTO MEMORIA: O(1).
+    validarRemove(xs);
+    xs->cantidad--;
 }
