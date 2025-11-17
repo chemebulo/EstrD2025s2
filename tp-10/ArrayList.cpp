@@ -72,10 +72,28 @@ void resize(int capacidad, ArrayList xs){
 
 void add(int x, ArrayList xs){
 // PROPÓSITO: Agrega un elemento al final de la lista.
+    if(xs->cantidad == xs->capacidad){
+        int* elems = new int[xs->capacidad*2];
 
+        for(int i = 0; i < xs->capacidad; i++){
+            elems[i] = xs->elementos[i];
+        }
+    
+        delete[] xs->elementos;  
+        xs->elementos = elems;
+        xs->capacidad *= 2;
+    }
+    
+    xs->elementos[xs->cantidad] = x;
+    xs->cantidad++;
 }
 
 void remove(ArrayList xs){
 // PROPÓSITO: Borra el último elemento de la lista.
-
+// PRECONDICIÓN: El ArrayList no debe estar vacío.
+    if(xs->cantidad == 0){
+        throw new runtime_error("El ArrayList no puede estar vacío");
+    } else {
+        xs->cantidad--;
+    }
 }
