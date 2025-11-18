@@ -5,7 +5,7 @@ struct NodoL {
     /* INVARIANTES DE REPRESENTACIÓN:
         * Ninguna.
     */
-    int elem;    // Valor del nodo.
+    int value;    // Valor del nodo.
     NodoL* next; // Puntero al siguiente nodo.
 };
 
@@ -33,7 +33,7 @@ struct IteratorSt {
 
 typedef IteratorSt* ListIterator; // INV.REP.: El puntero NO es NULL.
 
-// ############################################################ INTERFAZ ############################################################ //
+// ########################################################################################################################## //
 
 LinkedList nil();
 // PROPÓSITO: Crea una lista vacía
@@ -106,3 +106,5 @@ void DisposeIterator(ListIterator ixs);
 // PROPÓSITO: Libera la memoria ocupada por el iterador.
 // COSTO OPERACIONAL: O(1).
 // COSTO MEMORIA: O(1).
+
+// ########################################################################################################################## //

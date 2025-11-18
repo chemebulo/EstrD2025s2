@@ -25,7 +25,7 @@ int head(LinkedList xs){
 // PRECONDICIÓN: La LinkedList no está vacía.
 // COSTO OPERACIONAL: O(1).
 // COSTO MEMORIA: O(1).
-    return xs->first->elem;
+    return xs->first->value;
 }
 
 void Cons(int x, LinkedList xs){
@@ -33,7 +33,7 @@ void Cons(int x, LinkedList xs){
 // COSTO OPERACIONAL: O(1).
 // COSTO MEMORIA: O(1).
     NodoLL nuevo = new NodoL();
-    nuevo->elem = x;
+    nuevo->value = x;
     nuevo->next = xs->first;
 
     if(xs->first == NULL){
@@ -72,7 +72,7 @@ void Snoc(int x, LinkedList xs){
 // COSTO OPERACIONAL: O(1).
 // COSTO MEMORIA: O(1).
     NodoLL nuevo = new NodoL();
-    nuevo->elem = x;
+    nuevo->value = x;
     nuevo->next = NULL;
 
     if(xs->first == NULL){
@@ -114,14 +114,14 @@ int current(ListIterator ixs){
 // PRECONDICIÓN: El iterador no se encuentra en el final del recorrido.
 // COSTO OPERACIONAL: O(1).
 // COSTO MEMORIA: O(1).
-    return ixs->current->elem;
+    return ixs->current->value;
 }
 
 void SetCurrent(int x, ListIterator ixs){
 // PROPÓSITO: Reemplaza el elemento actual por otro elemento.
 // COSTO OPERACIONAL: O(1).
 // COSTO MEMORIA: O(1).
-    ixs->current->elem = x;
+    ixs->current->value = x;
 }
 
 void Next(ListIterator ixs){
