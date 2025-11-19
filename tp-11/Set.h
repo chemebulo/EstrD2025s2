@@ -61,7 +61,7 @@ LinkedList setToList(Set s);
 // COSTO MEMORIA: O(1).
 
 void DestroyS(Set s);
-// PROPÓSITO: Libera la memoria o cupada por el conjunto.
+// PROPÓSITO: Libera la memoria ocupada por el conjunto.
 // COSTO OPERACIONAL: O(N).
 // COSTO MEMORIA: O(1).
 
