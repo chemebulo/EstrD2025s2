@@ -36,7 +36,19 @@ void AddS(int x, Set s){
 // PROPÓSITO: Agrega un elemento al conjunto.
 // COSTO OPERACIONAL: O(N).
 // COSTO MEMORIA: O(1).
-    
+    NodoSS actual = s->first;
+    NodoSS nuevo = new NodoS();
+    nuevo->value = x;
+
+    while(actual != NULL && actual->value != x){
+        actual = actual->next;
+    }
+
+    if(actual == NULL){
+        nuevo->next = s->first;
+        s->first = nuevo;
+        s->size++;
+    }
 }
 
 void RemoveS(int x, Set s){
@@ -50,7 +62,7 @@ int sizeS(Set s){
 // PROPÓSITO: Devuelve la cantidad de elementos.
 // COSTO OPERACIONAL: O(1).
 // COSTO MEMORIA: O(1).
-    
+    return s->size;
 }
 
 LinkedList setToList(Set s){
