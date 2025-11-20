@@ -9,18 +9,19 @@ struct NodoQ {
     NodoQ* next; // Puntero al siguiente nodo.
 };
 
-typedef NodoQ* NodoQQ;
+typedef NodoQ* NodoQQ; // INV. REP.: El puntero no es NULL.
 
 struct QueueSt {
     /* INVARIANTES DE REPRESENTACIÓN:
-        * Ninguno.
+        * Size es la cantidad de nodos a recorrer desde first hasta llegar a last.
+        * 
     */
     int size;     // Cantidad de elementos.
     NodoQ* first; // Puntero al primer nodo.
     NodoQ* last;  // Puntero al ultimo nodo.
 };
 
-typedef QueueSt* Queue;
+typedef QueueSt* Queue; // INV. REP.: El puntero no es NULL.
 
 // ########################################################################################################################## //
 
