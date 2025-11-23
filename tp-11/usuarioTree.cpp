@@ -159,5 +159,18 @@ ArrayList levelN(int n, Tree t){
 */
 
 int main(){
+    Tree et = emptyT();
+    Tree t1 = nodeT(7, et, et);
+    Tree t2 = nodeT(9, et, et);
+    Tree t3 = nodeT(6, t1, t2);
+    Tree t4 = nodeT(11, et, et);
+    Tree t5 = nodeT(5, t3, t4);
+    ArrayList al = toList(t5);
+    cout << "El largo del ArrayList es de " << lengthAL(al) << "." << endl;
+    cout << "El primer elemento del array es " << get(0, al) << "." << endl;
+    cout << "El segundo elemento del array es " << get(1, al) << "." << endl;
+    cout << "El tercer elemento del array es " << get(2, al) << "." << endl;
+    cout << "El cuarto elemento del array es " << get(3, al) << "." << endl;
+    cout << "El quinto elemento del array es " << get(4, al) << "." << endl;
     return 0;
 }
