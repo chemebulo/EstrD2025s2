@@ -129,5 +129,43 @@ LinkedList copy(LinkedList xs){
 */
 
 int main(){
+    LinkedList lista1 = nil();
+    LinkedList lista2 = nil();
+    Snoc(4, lista1);
+    Snoc(10, lista1);
+    Snoc(22, lista1);
+    Snoc(55, lista1);
+    Snoc(1, lista2);
+    Snoc(15, lista2);
+    Snoc(25, lista2);
+    Snoc(25, lista2);
+    Snoc(25, lista2);
+    cout << "El primer elemento de la primera lista es " << head(lista1) << "." << endl;
+    cout << "El primer elemento de la segunda lista es " << head(lista2) << "." << endl;
+    Tail(lista1);
+    Tail(lista2);
+    cout << "El despues de quitar primer elemento de la primera lista, su primer elemento es " << head(lista1) << "." << endl;
+    cout << "El despues de quitar primer elemento de la segunda lista, su primer elemento es " << head(lista2) << "." << endl;
+    Sucesores(lista1);
+    Sucesores(lista2);
+    cout << endl;
+    cout << "El sucesor despues de quitar primer elemento de la primera lista, su primer elemento es " << head(lista1) << "." << endl;
+    cout << "El sucesor despues de quitar primer elemento de la segunda lista, su primer elemento es " << head(lista2) << "." << endl;
+    cout << endl;
+    cout << "La longitud de la primera lista es de " << length(lista1) << "." << endl;
+    cout << "La longitud de la segunda lista es de " << length(lista2) << "." << endl;
+    cout << endl;
+    cout << "La sumatoria de la primera lista es " << sumatoria(lista1) << "." << endl;
+    cout << "La sumatoria de la segunda lista es " << sumatoria(lista2) << "." << endl;
+    cout << endl;
+    cout << boolalpha << "Existe el 11 en la primera lista: " << pertenece(11, lista1) << "." << endl;
+    cout << boolalpha << "Existe el 20 en la segunda lista: " << pertenece(20, lista2) << "." << endl;
+    cout << endl;
+    cout << "La cantidad de apariciones del 56 en la primera lista " << apariciones(56, lista1) << "." << endl;
+    cout << "La cantidad de apariciones del 26 en la segunda lista " << apariciones(26, lista2) << "." << endl;
+    cout << endl;
+    cout << "El minimo de la primera lista es " << minimo(lista1) << "." << endl;
+    cout << "El minimo de la segunda lista es " << minimo(lista2) << "." << endl;
+    cout << endl;
     return 0;
 }
