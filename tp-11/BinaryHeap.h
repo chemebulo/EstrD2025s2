@@ -4,6 +4,8 @@ using namespace std;
 struct BinHeapHeaderSt;
 typedef BinHeapHeaderSt* BinHeap; // INV. REP.: El puntero NO es NULL.
 
+// ########################################################################################################################## //
+
 BinHeap emptyHeap();
 // PROPÓSITO: Describe una heap binaria vacía.
 // COSTO OPERACIONAL: O(1).
@@ -30,3 +32,5 @@ void deleteMin(BinHeap h);
 // PRECONDICIÓN: La heap binaria no está vacía.
 // COSTO OPERACIONAL: O(log N).
 // COSTO MEMORIA: O(1).
+
+// ########################################################################################################################## //

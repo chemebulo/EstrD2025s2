@@ -12,6 +12,8 @@ struct BinHeapHeaderSt {
     int* elems;     // Es el array con todos los elementos de la heap binaria.
 };
 
+// ########################################################################################################################## //
+
 BinHeap emptyHeap(){
 // PROPÓSITO: Describe una heap binaria vacía.
 // COSTO OPERACIONAL: O(1).

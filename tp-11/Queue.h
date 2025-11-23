@@ -1,26 +1,9 @@
 #include <iostream>
 using namespace std;
 
-struct NodoQ {
-    /* INVARIANTES DE REPRESENTACIÓN:
-        * Ninguno.
-    */
-    int value;   // Valor del nodo.
-    NodoQ* next; // Puntero al siguiente nodo.
-};
+struct NodoQ;
 
-typedef NodoQ* NodoQQ; // INV. REP.: El puntero no es NULL.
-
-struct QueueSt {
-    /* INVARIANTES DE REPRESENTACIÓN:
-        * Size es la cantidad de nodos a recorrer desde first hasta llegar a NULL.
-        * Si last != NULL, entonces last->next es NULL, y además first != NULL.
-    */
-    int size;     // Cantidad de elementos.
-    NodoQ* first; // Puntero al primer nodo.
-    NodoQ* last;  // Puntero al ultimo nodo.
-};
-
+struct QueueSt;
 typedef QueueSt* Queue; // INV. REP.: El puntero no es NULL.
 
 // ########################################################################################################################## //

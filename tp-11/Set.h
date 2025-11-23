@@ -2,25 +2,9 @@
 #include "LinkedList.h"
 using namespace std;
 
-struct NodoS {
-    /* INVARIANTES DE REPRESENTACIÓN:
-        * Ninguna.
-    */
-    int value;   // Valor del nodo.
-    NodoS* next; // Puntero al siguiente nodo.
-};
+struct NodoS;
 
-typedef NodoS* NodoSS; // INV. REP.: El puntero no es NULL.
-
-struct SetSt {
-    /* INVARIANTES DE REPRESENTACIÓN:
-        * Size debe representar la cantidad de nodos a recorrer hasta alcanzar NULL desde first.
-        * Recorriendo desde el nodo first hasta NULL, no puede haber dos nodos con el mismo value.
-    */
-    int size;     // Cantidad de elementos diferentes.
-    NodoS* first; // Puntero al primer nodo.
-};
-
+struct SetSt;
 typedef SetSt* Set; // INV. REP.: El puntero no es NULL.
 
 // ########################################################################################################################## //

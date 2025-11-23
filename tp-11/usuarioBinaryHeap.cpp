@@ -15,6 +15,8 @@ BinHeap crearHeap(int* elements, int cant){
     return h;
 }
 
+// ########################################################################################################################## //
+
 /* INTERFAZ DE BINARY HEAP:
     * BinHeap emptyHeap();
     * void InsertH(int x, BinHeap h);

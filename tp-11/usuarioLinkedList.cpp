@@ -109,6 +109,8 @@ LinkedList copy(LinkedList xs){
     return ys;
 }
 
+// ########################################################################################################################## //
+
 /* INTERFAZ DE LINKEDLIST:
     * LinkedList nil()
     * bool isEmpty(LinkedList xs)

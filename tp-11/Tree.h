@@ -1,15 +1,7 @@
 #include <iostream>
 using namespace std;
 
-struct NodeT {
-    /* INVARIANTES DE REPRESENTACIÓN:
-        * Ninguno.
-    */
-    int elem;
-    NodeT* left;
-    NodeT* right;
-};
-
+struct NodeT;
 typedef NodeT* Tree;
 
 // ########################################################################################################################## //

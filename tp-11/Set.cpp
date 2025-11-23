@@ -2,11 +2,30 @@
 #include "Set.h"
 using namespace std;
 
+struct NodoS {
+    /* INVARIANTES DE REPRESENTACIÓN:
+        * Ninguna.
+    */
+    int value;   // Valor del nodo.
+    NodoS* next; // Puntero al siguiente nodo.
+};
+
+struct SetSt {
+    /* INVARIANTES DE REPRESENTACIÓN:
+        * Size debe representar la cantidad de nodos a recorrer hasta alcanzar NULL desde first.
+        * Recorriendo desde el nodo first hasta NULL, no puede haber dos nodos con el mismo value.
+    */
+    int size;     // Cantidad de elementos diferentes.
+    NodoS* first; // Puntero al primer nodo.
+};
+
+// ########################################################################################################################## //
+
 Set emptyS(){
 // PROPÓSITO: Crea un conjunto vacío.
 // COSTO OPERACIONAL: O(1).
 // COSTO MEMORIA: O(1).
-    Set s = new SetSt();
+    SetSt* s = new SetSt();
     s->first = NULL;
     s->size = 0;
     return s;
@@ -23,7 +42,7 @@ bool belongsS(int x, Set s){
 // PROPÓSITO: Indica si el elemento pertenece al conjunto.
 // COSTO OPERACIONAL: O(N).
 // COSTO MEMORIA: O(1).
-    NodoSS actual = s->first;    
+    NodoS* actual = s->first;    
 
     while(actual != NULL && actual->value != x){
         actual = actual->next;
@@ -36,14 +55,14 @@ void AddS(int x, Set s){
 // PROPÓSITO: Agrega un elemento al conjunto.
 // COSTO OPERACIONAL: O(N).
 // COSTO MEMORIA: O(1).
-    NodoSS actual = s->first;
+    NodoS* actual = s->first;
     
     while(actual != NULL && actual->value != x){
         actual = actual->next;
     }
     
     if(actual == NULL){
-        NodoSS nuevo = new NodoS();
+        NodoS* nuevo = new NodoS();
         nuevo->value = x;
         nuevo->next = s->first;
         s->first = nuevo;
@@ -55,8 +74,8 @@ void RemoveS(int x, Set s){
 // PROPÓSITO: Quita un elemento dado.
 // COSTO OPERACIONAL: O(N).
 // COSTO MEMORIA: O(1).
-    NodoSS actual = s->first;
-    NodoSS anterior = NULL;
+    NodoS* actual = s->first;
+    NodoS* anterior = NULL;
     
     while(actual != NULL && actual->value != x){
         anterior = actual;
@@ -89,7 +108,7 @@ LinkedList setToList(Set s){
 // COSTO OPERACIONAL: O(N).
 // COSTO MEMORIA: O(1).
     LinkedList xs = nil();
-    NodoSS actual = s->first;
+    NodoS* actual = s->first;
 
     while(actual != NULL){
         Snoc(actual->value, xs);
@@ -103,8 +122,8 @@ void DestroyS(Set s){
 // PROPÓSITO: Libera la memoria ocupada por el conjunto.
 // COSTO OPERACIONAL: O(N).
 // COSTO MEMORIA: O(1).
-    NodoSS actual = s->first;
-    NodoSS temp;
+    NodoS* actual = s->first;
+    NodoS* temp;
 
     while(actual != NULL){
         temp = actual;

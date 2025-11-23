@@ -1,36 +1,12 @@
 #include <iostream>
 using namespace std;
 
-struct NodoL {
-    /* INVARIANTES DE REPRESENTACIÓN:
-        * Ninguna.
-    */
-    int value;    // Valor del nodo.
-    NodoL* next; // Puntero al siguiente nodo.
-};
+struct NodoL;
 
-typedef NodoL* NodoLL; // INV.REP.: El puntero NO es NULL.
-
-struct LinkedListSt {
-    /* INVARIANTES DE REPRESENTACIÓN:
-        * Size es la cantidad de nodos a recorrer (nodo->next) hasta llegar a un NULL desde first.
-        * First es NULL si y solo si last también lo es.
-        * Si last no es NULL, entonces last->next es NULL.
-    */
-    int size;     // Cantidad de elementos.
-    NodoL* first; // Puntero al primer nodo.
-    NodoL* last;  // Puntero al último nodo.
-};
-
+struct LinkedListSt;
 typedef LinkedListSt* LinkedList; // INV.REP.: El puntero NO es NULL.
 
-struct IteratorSt {
-    /* INVARIANTES DE REPRESENTACIÓN:
-        * Ninguna.
-    */
-    NodoL* current;
-};
-
+struct IteratorSt;
 typedef IteratorSt* ListIterator; // INV.REP.: El puntero NO es NULL.
 
 // ########################################################################################################################## //

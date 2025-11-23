@@ -2,11 +2,39 @@
 #include "LinkedList.h"
 using namespace std;
 
+struct NodoL {
+    /* INVARIANTES DE REPRESENTACIÓN:
+        * Ninguna.
+    */
+    int value;    // Valor del nodo.
+    NodoL* next;  // Puntero al siguiente nodo.
+};
+
+struct LinkedListSt {
+    /* INVARIANTES DE REPRESENTACIÓN:
+        * Size es la cantidad de nodos a recorrer (nodo->next) hasta llegar a un NULL desde first.
+        * First es NULL si y solo si last también lo es.
+        * Si last no es NULL, entonces last->next es NULL.
+    */
+    int size;     // Cantidad de elementos.
+    NodoL* first; // Puntero al primer nodo.
+    NodoL* last;  // Puntero al último nodo.
+};
+
+struct IteratorSt {
+    /* INVARIANTES DE REPRESENTACIÓN:
+        * Ninguna.
+    */
+    NodoL* current;
+};
+
+// ########################################################################################################################## //
+
 LinkedList nil(){
 // PROPÓSITO: Crea una lista vacía
 // COSTO OPERACIONAL: O(1).
 // COSTO MEMORIA: O(1).
-    LinkedList xs = new LinkedListSt();
+    LinkedListSt* xs = new LinkedListSt();
     xs->first = NULL;
     xs->last = NULL;
     xs->size = 0;
@@ -32,7 +60,7 @@ void Cons(int x, LinkedList xs){
 // PROPÓSITO: Agrega un elemento al principio de la lista.
 // COSTO OPERACIONAL: O(1).
 // COSTO MEMORIA: O(1).
-    NodoLL nuevo = new NodoL();
+    NodoL* nuevo = new NodoL();
     nuevo->value = x;
     nuevo->next = xs->first;
 
@@ -49,7 +77,7 @@ void Tail(LinkedList xs){
 // PRECONDICIÓN: La LinkedList no está vacía.
 // COSTO OPERACIONAL: O(1).
 // COSTO MEMORIA: O(1).
-    NodoLL temp = xs->first;
+    NodoL* temp = xs->first;
 
     if(xs->first == xs->last){
         xs->last = NULL;    
@@ -71,7 +99,7 @@ void Snoc(int x, LinkedList xs){
 // PROPÓSITO: Agrega un elemento al final de la lista.
 // COSTO OPERACIONAL: O(1).
 // COSTO MEMORIA: O(1).
-    NodoLL nuevo = new NodoL();
+    NodoL* nuevo = new NodoL();
     nuevo->value = x;
     nuevo->next = NULL;
 
@@ -89,7 +117,7 @@ void DestroyL(LinkedList xs){
 // PROPÓSITO: Libera la memoria ocupada por la lista.
 // COSTO OPERACIONAL: O(N).
 // COSTO MEMORIA: O(1).
-    NodoLL temp;
+    NodoL* temp;
 
     while(xs->first != NULL){
         temp = xs->first;
@@ -104,7 +132,7 @@ ListIterator getIterator(LinkedList xs){
 // PROPÓSITO: Apunta el recorrido al primer elemento.
 // COSTO OPERACIONAL: O(1).
 // COSTO MEMORIA: O(1).
-    ListIterator ixs = new IteratorSt();
+    IteratorSt* ixs = new IteratorSt();
     ixs->current = xs->first;
     return ixs;
 }

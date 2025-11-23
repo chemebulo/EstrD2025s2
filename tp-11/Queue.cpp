@@ -2,11 +2,31 @@
 #include "Queue.h"
 using namespace std;
 
+struct NodoQ {
+    /* INVARIANTES DE REPRESENTACIÓN:
+        * Ninguno.
+    */
+    int value;   // Valor del nodo.
+    NodoQ* next; // Puntero al siguiente nodo.
+};
+
+struct QueueSt {
+    /* INVARIANTES DE REPRESENTACIÓN:
+        * Size es la cantidad de nodos a recorrer desde first hasta llegar a NULL.
+        * Si last != NULL, entonces last->next es NULL, y además first != NULL.
+    */
+    int size;     // Cantidad de elementos.
+    NodoQ* first; // Puntero al primer nodo.
+    NodoQ* last;  // Puntero al ultimo nodo.
+};
+
+// ########################################################################################################################## //
+
 Queue emptyQ(){
 // PROPÓSITO: Crea una cola vacía.
 // COSTO OPERACIONAL: O(1).
 // COSTO MEMORIA: O(1).
-    Queue q = new QueueSt();
+    QueueSt* q = new QueueSt();
     q->size = 0;
     q->first = NULL;
     q->last = NULL;
@@ -35,7 +55,7 @@ void Enqueue(int x, Queue q){
 // PROPÓSITO: Agrega un elemento al final de la cola.
 // COSTO OPERACIONAL: O(1).
 // COSTO MEMORIA: O(1).
-    NodoQQ nuevo = new NodoQ();
+    NodoQ* nuevo = new NodoQ();
     nuevo->value = x;
     nuevo->next = NULL;
 
@@ -58,7 +78,7 @@ void Dequeue(Queue q){
         throw new runtime_error("La Queue está vacía.");
     }
 
-    NodoQQ temp = q->first;
+    NodoQ* temp = q->first;
     
     if(q->first->next == NULL){
         q->last = NULL;
@@ -96,7 +116,7 @@ void DestroyQ(Queue q){
 // PROPÓSITO: Libera la memoria ocupada por la cola.
 // COSTO OPERACIONAL: O(N).
 // COSTO MEMORIA: O(1).
-    NodoQQ temp;
+    NodoQ* temp;
 
     while(q->first != NULL){
         temp = q->first;
